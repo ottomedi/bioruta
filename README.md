@@ -18,3 +18,12 @@ Plantilla para el 8º Hackathon de Boehringer Ingelheim España: planificación 
 
 - `main` siempre desplegable; cada tarea en su rama (`feat/`, `fix/`, `chore/`) y PR pequeña.
 - Un entregable no está cerrado si no está en `main`, desplegado y comprobado.
+
+## Requisitos
+
+- Docker y Docker Compose
+- Python 3.14 (solo si ejecutas el backend sin Docker)
+
+## Uso
+
+La API queda en `http://localhost:8000` y la documentación en `http://localhost:8000/docs`.
