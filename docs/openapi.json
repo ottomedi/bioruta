@@ -1,0 +1,2131 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "BioRuta API",
+    "version": "0.1.0",
+    "description": "Contrato v0 (borrador del día 1). Sale de docs/modelo-dominio.md y sirve\npara generar los tipos del frontend (openapi-typescript) y los mocks de MSW\nhasta que el backend real publique su propio OpenAPI (día 3).\n\nConvenciones:\n- Las fechas y horas van en ISO 8601 con zona y se guardan en UTC. El\n  frontend las enseña en hora de Madrid.\n- Una respuesta correcta devuelve el recurso tal cual; el código HTTP indica\n  si fue bien. Todos los errores usan el esquema Error, así el frontend tiene\n  un único sitio donde leerlos.\n- Las listas paginadas devuelven items, total, page y limit.\n- Todo pide token Bearer salvo /health, /auth/login y /auth/demo.\n- Los valores numéricos del motor no viajan aquí como datos editables:\n  salen de risk_config.yaml y se consultan con GET /reglas.\n"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000",
+      "description": "Local (docker compose)"
+    },
+    {
+      "url": "https://bioruta-api.onrender.com",
+      "description": "Producción (Render)"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "sistema",
+      "description": "Estado del backend."
+    },
+    {
+      "name": "auth",
+      "description": "Inicio de sesión, incluido el acceso directo de demo."
+    },
+    {
+      "name": "granjas",
+      "description": "Granjas y su historial sanitario."
+    },
+    {
+      "name": "veterinarios",
+      "description": "Veterinarios y el riesgo que llevan encima."
+    },
+    {
+      "name": "visitas",
+      "description": "Entradas y salidas reales en granjas."
+    },
+    {
+      "name": "rutas",
+      "description": "Cálculo y guardado de la ruta del día."
+    },
+    {
+      "name": "alertas",
+      "description": "Marcar una granja como positiva o sospechosa."
+    },
+    {
+      "name": "trazabilidad",
+      "description": "Quién estuvo expuesto tras un positivo y adónde fue después."
+    },
+    {
+      "name": "reglas",
+      "description": "Hoja de reglas del motor con sus fuentes."
+    },
+    {
+      "name": "importacion",
+      "description": "Carga de ficheros externos a través de adaptadores."
+    },
+    {
+      "name": "demo",
+      "description": "Utilidades para mantener el escenario de la demo."
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "sistema"
+        ],
+        "summary": "Comprobar que el backend responde",
+        "description": "Lo usa el frontend del día 1 y el ping que evita que el backend se duerma.",
+        "security": [],
+        "operationId": "getHealth",
+        "responses": {
+          "200": {
+            "description": "Backend vivo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Iniciar sesión con email y contraseña",
+        "security": [],
+        "operationId": "login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sesión iniciada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NoAutorizado"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validacion"
+          }
+        }
+      }
+    },
+    "/auth/demo": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Entrar como el usuario de demo",
+        "description": "Lo usa el botón «Entrar como demo». Devuelve un token del usuario de\ndemo sin pedir contraseña, para que el jurado no tropiece con el login y\nlas credenciales no tengan que estar en el frontend.\n",
+        "security": [],
+        "operationId": "loginDemo",
+        "responses": {
+          "200": {
+            "description": "Sesión de demo iniciada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El modo demo está desactivado en este despliegue",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Usuario de la sesión y su veterinario",
+        "operationId": "getMe",
+        "responses": {
+          "200": {
+            "description": "Usuario actual",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Usuario"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NoAutorizado"
+          }
+        }
+      }
+    },
+    "/granjas": {
+      "get": {
+        "tags": [
+          "granjas"
+        ],
+        "summary": "Listar granjas con filtros",
+        "operationId": "listGranjas",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "name": "tipo",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/TipoGranja"
+            }
+          },
+          {
+            "name": "estado",
+            "in": "query",
+            "description": "Filtra por el estado vigente (el de mayor riesgo entre los vigentes).",
+            "schema": {
+              "$ref": "#/components/schemas/Estado"
+            }
+          },
+          {
+            "name": "zona",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Busca en nombre, municipio y código REGA.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Página de granjas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginaGranjas"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NoAutorizado"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "granjas"
+        ],
+        "summary": "Dar de alta una granja",
+        "description": "Nace con un estado sin_incidencias. Para darla de alta con otro estado\nse usa después POST /alertas o la importación.\n",
+        "operationId": "createGranja",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GranjaCrear"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Granja creada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Granja"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NoAutorizado"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflicto"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validacion"
+          }
+        }
+      }
+    },
+    "/granjas/{granja_id}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/GranjaId"
+        }
+      ],
+      "get": {
+        "tags": [
+          "granjas"
+        ],
+        "summary": "Ficha de una granja",
+        "operationId": "getGranja",
+        "responses": {
+          "200": {
+            "description": "Granja",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Granja"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NoAutorizado"
+          },
+          "404": {
+            "$ref": "#/components/responses/NoEncontrado"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "granjas"
+        ],
+        "summary": "Editar los datos de una granja",
+        "description": "No cambia el estado sanitario (eso va por POST /alertas). No hay DELETE:\nborrar una granja con visitas rompería la trazabilidad.\n",
+        "operationId": "updateGranja",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GranjaEditar"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Granja actualizada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Granja"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NoAutorizado"
+          },
+          "404": {
+            "$ref": "#/components/responses/NoEncontrado"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflicto"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validacion"
+          }
+        }
+      }
+    },
+    "/granjas/{granja_id}/estados": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/GranjaId"
+        }
+      ],
+      "get": {
+        "tags": [
+          "granjas"
+        ],
+        "summary": "Historial sanitario de una granja",
+        "description": "Para la ficha de granja. Ordenado del más reciente al más antiguo.",
+        "operationId": "listEstadosGranja",
+        "responses": {
+          "200": {
+            "description": "Historial",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EstadoSanitario"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NoAutorizado"
+          },
+          "404": {
+            "$ref": "#/components/responses/NoEncontrado"
+          }
+        }
+      }
+    },
+    "/veterinarios": {
+      "get": {
+        "tags": [
+          "veterinarios"
+        ],
+        "summary": "Listar veterinarios",
+        "description": "Son pocos (dos en el seed), así que no se pagina.",
+        "operationId": "listVeterinarios",
+        "responses": {
+          "200": {
+            "description": "Veterinarios",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Veterinario"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NoAutorizado"
+          }
+        }
+      }
+    },
+    "/veterinarios/{veterinario_id}/riesgo": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/VeterinarioId"
+        }
+      ],
+      "get": {
+        "tags": [
+          "veterinarios"
+        ],
+        "summary": "Riesgo que lleva encima el veterinario ahora",
+        "description": "Se calcula en cada llamada a partir de su última visita, las horas desde\nla salida y las medidas aplicadas. Lo usa el indicador de la barra\nsuperior.\n",
+        "operationId": "getRiesgoVeterinario",
+        "parameters": [
+          {
+            "name": "en",
+            "in": "query",
+            "description": "Momento para el que se calcula. Por defecto, ahora.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Riesgo actual",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiesgoVeterinario"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NoAutorizado"
+          },
+          "404": {
+            "$ref": "#/components/responses/NoEncontrado"
+          }
+        }
+      }
+    },
+    "/visitas": {
+      "get": {
+        "tags": [
+          "visitas"
+        ],
+        "summary": "Listar visitas con filtros",
+        "operationId": "listVisitas",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "name": "granja_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "veterinario_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "desde",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "hasta",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "abiertas",
+            "in": "query",
+            "description": "Si es true, solo las visitas sin salida.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Página de visitas, de la más reciente a la más antigua",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginaVisitas"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NoAutorizado"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "visitas"
+        ],
+        "summary": "Registrar la entrada en una granja",
+        "description": "Botón «Entrar». El veterinario es el del usuario de la sesión. Falla con\n409 si ese veterinario ya tiene una visita abierta. El backend copia en\nla visita el estado vigente de la granja.\n",
+        "operationId": "entrarVisita",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VisitaEntrada"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Visita abierta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visita"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NoAutorizado"
+          },
+          "404": {
+            "$ref": "#/components/responses/NoEncontrado"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflicto"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validacion"
+          }
+        }
+      }
+    },
+    "/visitas/{visita_id}/salida": {
+      "parameters": [
+        {
+          "name": "visita_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "post": {
+        "tags": [
+          "visitas"
+        ],
+        "summary": "Registrar la salida y las medidas aplicadas",
+        "description": "Botón «Salir». Falla con 409 si la visita ya estaba cerrada.",
+        "operationId": "salirVisita",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VisitaSalida"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Visita cerrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visita"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NoAutorizado"
+          },
+          "404": {
+            "$ref": "#/components/responses/NoEncontrado"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflicto"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validacion"
+          }
+        }
+      }
+    },
+    "/rutas/calcular": {
+      "post": {
+        "tags": [
+          "rutas"
+        ],
+        "summary": "Calcular la ruta más corta y la segura para unas granjas",
+        "description": "No guarda nada. Devuelve las dos rutas para el panel comparativo. Si las\nreglas duras no dejan ninguna ruta válida, responde 422 con el código\nruta_imposible y la regla que lo impide.\n",
+        "operationId": "calcularRutas",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalculoRutaRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Las dos rutas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComparacionRutas"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NoAutorizado"
+          },
+          "404": {
+            "$ref": "#/components/responses/NoEncontrado"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validacion"
+          }
+        }
+      }
+    },
+    "/rutas": {
+      "get": {
+        "tags": [
+          "rutas"
+        ],
+        "summary": "Buscar rutas guardadas",
+        "description": "La pantalla de la ruta del día la pide con veterinario_id y fecha.",
+        "operationId": "listRutas",
+        "parameters": [
+          {
+            "name": "veterinario_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "fecha",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "estado",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/EstadoRuta"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rutas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Ruta"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NoAutorizado"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "rutas"
+        ],
+        "summary": "Guardar la ruta elegida para un día",
+        "description": "El cliente manda las granjas y el criterio, no el orden: el backend\nvuelve a calcular la ruta para no fiarse de lo que mande el cliente.\nSi ya hay una ruta planificada ese día, la sustituye. Si está en curso o\ncerrada, responde 409.\n",
+        "operationId": "guardarRuta",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GuardarRutaRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Ruta guardada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ruta"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NoAutorizado"
+          },
+          "404": {
+            "$ref": "#/components/responses/NoEncontrado"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflicto"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validacion"
+          }
+        }
+      }
+    },
+    "/rutas/{ruta_id}": {
+      "parameters": [
+        {
+          "name": "ruta_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "rutas"
+        ],
+        "summary": "Una ruta con sus paradas",
+        "operationId": "getRuta",
+        "responses": {
+          "200": {
+            "description": "Ruta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ruta"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NoAutorizado"
+          },
+          "404": {
+            "$ref": "#/components/responses/NoEncontrado"
+          }
+        }
+      }
+    },
+    "/alertas": {
+      "post": {
+        "tags": [
+          "alertas"
+        ],
+        "summary": "Marcar una granja como positiva o sospechosa en una fecha",
+        "description": "Botón «Simular positivo». Inserta un EstadoSanitario con origen alerta y\nmarca como afectada_por_alerta las rutas planificadas que pasan por esa\ngranja o por granjas visitadas después por un veterinario expuesto.\n",
+        "operationId": "crearAlerta",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AlertaRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Alerta registrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertaResultado"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NoAutorizado"
+          },
+          "404": {
+            "$ref": "#/components/responses/NoEncontrado"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validacion"
+          }
+        }
+      }
+    },
+    "/trazabilidad/{granja_id}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/GranjaId"
+        }
+      ],
+      "get": {
+        "tags": [
+          "trazabilidad"
+        ],
+        "summary": "Quién visitó la granja en la ventana de riesgo y adónde fue después",
+        "description": "Se calcula en cada llamada con las ventanas de risk_config.yaml. Si no se\npasa fecha, se usa el inicio del último estado positivo o sospechoso de\nla granja; si no tiene ninguno, responde 422.\n",
+        "operationId": "getTrazabilidad",
+        "parameters": [
+          {
+            "name": "fecha",
+            "in": "query",
+            "description": "Fecha de referencia del positivo.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resultado de la trazabilidad",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Trazabilidad"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NoAutorizado"
+          },
+          "404": {
+            "$ref": "#/components/responses/NoEncontrado"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validacion"
+          }
+        }
+      }
+    },
+    "/reglas": {
+      "get": {
+        "tags": [
+          "reglas"
+        ],
+        "summary": "Hoja de reglas con sus fuentes",
+        "description": "Para la pantalla /fuentes. Es de solo lectura; las reglas cambian con una PR.",
+        "operationId": "listReglas",
+        "responses": {
+          "200": {
+            "description": "Reglas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Regla"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NoAutorizado"
+          }
+        }
+      }
+    },
+    "/import": {
+      "post": {
+        "tags": [
+          "importacion"
+        ],
+        "summary": "Importar un fichero de datos",
+        "description": "Elige el adaptador por el parámetro o por la extensión del fichero.\nLas filas válidas se guardan aunque otras fallen; el informe dice qué\nfilas fallaron y por qué.\n",
+        "operationId": "importar",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "fichero",
+                  "entidad"
+                ],
+                "properties": {
+                  "fichero": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "entidad": {
+                    "type": "string",
+                    "enum": [
+                      "granjas",
+                      "visitas",
+                      "estados"
+                    ]
+                  },
+                  "adaptador": {
+                    "type": "string",
+                    "description": "Nombre del adaptador (csv, json, oficial...). Si falta, se deduce de la extensión."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Informe de importación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformeImportacion"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NoAutorizado"
+          },
+          "422": {
+            "$ref": "#/components/responses/Validacion"
+          }
+        }
+      }
+    },
+    "/demo/reset": {
+      "post": {
+        "tags": [
+          "demo"
+        ],
+        "summary": "Devolver la base de datos al escenario de la demo",
+        "description": "Botón «Reiniciar demo». También lo lanza el reinicio automático cada hora.",
+        "operationId": "resetDemo",
+        "responses": {
+          "204": {
+            "description": "Demo reiniciada"
+          },
+          "401": {
+            "$ref": "#/components/responses/NoAutorizado"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "parameters": {
+      "Page": {
+        "name": "page",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        }
+      },
+      "Limit": {
+        "name": "limit",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      "GranjaId": {
+        "name": "granja_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "VeterinarioId": {
+        "name": "veterinario_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer"
+        }
+      }
+    },
+    "responses": {
+      "NoAutorizado": {
+        "description": "Falta el token o ha caducado",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "NoEncontrado": {
+        "description": "El recurso no existe",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Conflicto": {
+        "description": "La operación choca con el estado actual (visita ya abierta, REGA duplicado, ruta en curso)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Validacion": {
+        "description": "Datos no válidos o regla de negocio incumplida (incluye ruta_imposible)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "TipoGranja": {
+        "type": "string",
+        "description": "De más a menos sensible (orden pendiente de fuente en la hoja de reglas).",
+        "enum": [
+          "nucleo_genetico",
+          "multiplicacion",
+          "maternidad",
+          "ciclo_cerrado",
+          "transicion",
+          "cebo"
+        ]
+      },
+      "Estado": {
+        "type": "string",
+        "description": "De más a menos riesgo emitido.",
+        "enum": [
+          "positiva",
+          "sospechosa",
+          "zona_vigilancia",
+          "sin_incidencias"
+        ]
+      },
+      "Enfermedad": {
+        "type": "string",
+        "enum": [
+          "ppa",
+          "prrs",
+          "otra"
+        ]
+      },
+      "OrigenEstado": {
+        "type": "string",
+        "enum": [
+          "importado",
+          "alerta",
+          "seed"
+        ]
+      },
+      "Medida": {
+        "type": "string",
+        "enum": [
+          "ducha",
+          "cambio_ropa",
+          "desinfeccion_calzado"
+        ]
+      },
+      "CriterioRuta": {
+        "type": "string",
+        "enum": [
+          "mas_corta",
+          "segura"
+        ]
+      },
+      "EstadoRuta": {
+        "type": "string",
+        "enum": [
+          "planificada",
+          "en_curso",
+          "cerrada",
+          "afectada_por_alerta"
+        ]
+      },
+      "TipoRegla": {
+        "type": "string",
+        "enum": [
+          "normativa",
+          "guia",
+          "supuesto"
+        ]
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "codigo",
+          "mensaje"
+        ],
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "description": "Código estable para el frontend (no_autorizado, no_encontrado, visita_abierta, rega_duplicado, ruta_imposible, validacion...).",
+            "examples": [
+              "ruta_imposible"
+            ]
+          },
+          "mensaje": {
+            "type": "string",
+            "description": "Texto en español que se puede enseñar tal cual al usuario.",
+            "examples": [
+              "No hay orden posible: la granja 7 es positiva y la 3 es núcleo genético el mismo día (regla R02)."
+            ]
+          },
+          "detalles": {
+            "type": "array",
+            "description": "Errores por campo, si los hay.",
+            "items": {
+              "type": "object",
+              "required": [
+                "campo",
+                "mensaje"
+              ],
+              "properties": {
+                "campo": {
+                  "type": "string"
+                },
+                "mensaje": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "regla_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Regla de la hoja que causa el error, si aplica."
+          }
+        }
+      },
+      "Health": {
+        "type": "object",
+        "required": [
+          "estado",
+          "version"
+        ],
+        "properties": {
+          "estado": {
+            "type": "string",
+            "enum": [
+              "ok"
+            ]
+          },
+          "version": {
+            "type": "string"
+          }
+        }
+      },
+      "Coordenadas": {
+        "type": "object",
+        "required": [
+          "latitud",
+          "longitud"
+        ],
+        "properties": {
+          "latitud": {
+            "type": "number",
+            "minimum": -90,
+            "maximum": 90
+          },
+          "longitud": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "Token": {
+        "type": "object",
+        "required": [
+          "access_token",
+          "token_type"
+        ],
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string",
+            "enum": [
+              "bearer"
+            ]
+          }
+        }
+      },
+      "Usuario": {
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "veterinario"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "veterinario": {
+            "$ref": "#/components/schemas/Veterinario"
+          }
+        }
+      },
+      "GranjaResumen": {
+        "type": "object",
+        "description": "Lo mínimo para pintar una granja en una lista o en el mapa.",
+        "required": [
+          "id",
+          "nombre",
+          "tipo",
+          "coordenadas",
+          "estado_actual"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "nombre": {
+            "type": "string"
+          },
+          "tipo": {
+            "$ref": "#/components/schemas/TipoGranja"
+          },
+          "coordenadas": {
+            "$ref": "#/components/schemas/Coordenadas"
+          },
+          "estado_actual": {
+            "$ref": "#/components/schemas/Estado"
+          }
+        }
+      },
+      "Granja": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GranjaResumen"
+          },
+          {
+            "type": "object",
+            "required": [
+              "municipio",
+              "provincia"
+            ],
+            "properties": {
+              "codigo_rega": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "municipio": {
+                "type": "string"
+              },
+              "provincia": {
+                "type": "string"
+              },
+              "zona": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "enfermedad_actual": {
+                "description": "Enfermedad del estado vigente de mayor riesgo. Nulo si no hay incidencias.",
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Enfermedad"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "GranjaCrear": {
+        "type": "object",
+        "required": [
+          "nombre",
+          "tipo",
+          "coordenadas",
+          "municipio",
+          "provincia"
+        ],
+        "properties": {
+          "codigo_rega": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "nombre": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tipo": {
+            "$ref": "#/components/schemas/TipoGranja"
+          },
+          "coordenadas": {
+            "$ref": "#/components/schemas/Coordenadas"
+          },
+          "municipio": {
+            "type": "string"
+          },
+          "provincia": {
+            "type": "string"
+          },
+          "zona": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "GranjaEditar": {
+        "type": "object",
+        "description": "Todos los campos son opcionales; solo cambia lo que se manda.",
+        "properties": {
+          "codigo_rega": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "nombre": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tipo": {
+            "$ref": "#/components/schemas/TipoGranja"
+          },
+          "coordenadas": {
+            "$ref": "#/components/schemas/Coordenadas"
+          },
+          "municipio": {
+            "type": "string"
+          },
+          "provincia": {
+            "type": "string"
+          },
+          "zona": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "EstadoSanitario": {
+        "type": "object",
+        "required": [
+          "id",
+          "granja_id",
+          "estado",
+          "desde",
+          "origen"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "granja_id": {
+            "type": "integer"
+          },
+          "estado": {
+            "$ref": "#/components/schemas/Estado"
+          },
+          "enfermedad": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Enfermedad"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "desde": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "hasta": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Nulo mientras está vigente."
+          },
+          "origen": {
+            "$ref": "#/components/schemas/OrigenEstado"
+          }
+        }
+      },
+      "Veterinario": {
+        "type": "object",
+        "required": [
+          "id",
+          "nombre",
+          "base"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "nombre": {
+            "type": "string"
+          },
+          "base": {
+            "$ref": "#/components/schemas/Coordenadas"
+          }
+        }
+      },
+      "RiesgoVeterinario": {
+        "type": "object",
+        "required": [
+          "veterinario_id",
+          "nivel",
+          "calculado_en",
+          "explicacion"
+        ],
+        "properties": {
+          "veterinario_id": {
+            "type": "integer"
+          },
+          "nivel": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Riesgo que lleva encima. 0 es sin exposición; la escala la fija risk_config.yaml."
+          },
+          "calculado_en": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ultima_visita": {
+            "description": "La visita de la que sale el riesgo. Nulo si no hay visitas.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Visita"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "horas_desde_salida": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "explicacion": {
+            "type": "string",
+            "examples": [
+              "Saliste de una sospechosa de PRRS hace 3 h, con ducha y cambio de ropa."
+            ]
+          },
+          "reglas_aplicadas": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Ids de la hoja de reglas usados en el cálculo."
+          }
+        }
+      },
+      "Visita": {
+        "type": "object",
+        "required": [
+          "id",
+          "veterinario_id",
+          "granja",
+          "entrada",
+          "medidas",
+          "estado_granja_en_visita"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "veterinario_id": {
+            "type": "integer"
+          },
+          "granja": {
+            "$ref": "#/components/schemas/GranjaResumen"
+          },
+          "entrada": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "salida": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Nulo mientras la visita está abierta."
+          },
+          "medidas": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/Medida"
+            }
+          },
+          "parada_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "estado_granja_en_visita": {
+            "$ref": "#/components/schemas/Estado"
+          }
+        }
+      },
+      "VisitaEntrada": {
+        "type": "object",
+        "required": [
+          "granja_id"
+        ],
+        "properties": {
+          "granja_id": {
+            "type": "integer"
+          },
+          "parada_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "entrada": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Por defecto, ahora. Se puede mandar para registrar una visita pasada."
+          }
+        }
+      },
+      "VisitaSalida": {
+        "type": "object",
+        "required": [
+          "medidas"
+        ],
+        "properties": {
+          "salida": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Por defecto, ahora. Tiene que ser posterior a la entrada."
+          },
+          "medidas": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/Medida"
+            }
+          }
+        }
+      },
+      "PaginaVisitas": {
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "limit"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Visita"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          }
+        }
+      },
+      "PaginaGranjas": {
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "limit"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Granja"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          }
+        }
+      },
+      "CalculoRutaRequest": {
+        "type": "object",
+        "required": [
+          "veterinario_id",
+          "fecha",
+          "granja_ids"
+        ],
+        "properties": {
+          "veterinario_id": {
+            "type": "integer",
+            "description": "Su base es el punto de salida y su riesgo actual es el de partida."
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date"
+          },
+          "granja_ids": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 20,
+            "uniqueItems": true,
+            "items": {
+              "type": "integer"
+            },
+            "description": "El máximo de 20 es el límite de rendimiento del plan (menos de 3 s)."
+          }
+        }
+      },
+      "GuardarRutaRequest": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CalculoRutaRequest"
+          },
+          {
+            "type": "object",
+            "required": [
+              "criterio"
+            ],
+            "properties": {
+              "criterio": {
+                "$ref": "#/components/schemas/CriterioRuta"
+              }
+            }
+          }
+        ]
+      },
+      "Parada": {
+        "type": "object",
+        "required": [
+          "orden",
+          "granja",
+          "riesgo_llegada",
+          "explicacion",
+          "tramo_peligroso"
+        ],
+        "properties": {
+          "id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Nulo en una ruta calculada que aún no se ha guardado."
+          },
+          "orden": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "granja": {
+            "$ref": "#/components/schemas/GranjaResumen"
+          },
+          "riesgo_llegada": {
+            "type": "number",
+            "minimum": 0
+          },
+          "explicacion": {
+            "type": "string",
+            "examples": [
+              "Va primero: núcleo genético y llegas sin exposición previa (R01)."
+            ]
+          },
+          "regla_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Fila de la hoja que decidió la posición. Nulo si la decidió solo la distancia."
+          },
+          "tramo_peligroso": {
+            "type": "boolean",
+            "description": "True si llegar aquí desde la parada anterior es una exposición. La interfaz pinta el tramo en rojo."
+          },
+          "visita_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Visita que cumple esta parada, si ya se hizo."
+          }
+        }
+      },
+      "RutaCalculada": {
+        "type": "object",
+        "required": [
+          "criterio",
+          "km_total",
+          "exposiciones",
+          "paradas",
+          "geometria"
+        ],
+        "properties": {
+          "criterio": {
+            "$ref": "#/components/schemas/CriterioRuta"
+          },
+          "km_total": {
+            "type": "number",
+            "minimum": 0
+          },
+          "exposiciones": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "paradas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Parada"
+            }
+          },
+          "geometria": {
+            "type": "array",
+            "description": "Puntos de la polilínea desde la base. Con Haversine son las propias granjas; con OSRM, el trazado por carretera.",
+            "items": {
+              "$ref": "#/components/schemas/Coordenadas"
+            }
+          }
+        }
+      },
+      "ComparacionRutas": {
+        "type": "object",
+        "required": [
+          "mas_corta",
+          "segura"
+        ],
+        "properties": {
+          "mas_corta": {
+            "$ref": "#/components/schemas/RutaCalculada"
+          },
+          "segura": {
+            "$ref": "#/components/schemas/RutaCalculada"
+          }
+        }
+      },
+      "Ruta": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RutaCalculada"
+          },
+          {
+            "type": "object",
+            "required": [
+              "id",
+              "veterinario_id",
+              "fecha",
+              "estado"
+            ],
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "veterinario_id": {
+                "type": "integer"
+              },
+              "fecha": {
+                "type": "string",
+                "format": "date"
+              },
+              "estado": {
+                "$ref": "#/components/schemas/EstadoRuta"
+              }
+            }
+          }
+        ]
+      },
+      "AlertaRequest": {
+        "type": "object",
+        "required": [
+          "granja_id",
+          "estado",
+          "enfermedad",
+          "fecha"
+        ],
+        "properties": {
+          "granja_id": {
+            "type": "integer"
+          },
+          "estado": {
+            "type": "string",
+            "enum": [
+              "positiva",
+              "sospechosa"
+            ]
+          },
+          "enfermedad": {
+            "$ref": "#/components/schemas/Enfermedad"
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AlertaResultado": {
+        "type": "object",
+        "required": [
+          "estado",
+          "rutas_afectadas"
+        ],
+        "properties": {
+          "estado": {
+            "$ref": "#/components/schemas/EstadoSanitario"
+          },
+          "rutas_afectadas": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Ids de las rutas planificadas que han pasado a afectada_por_alerta."
+          }
+        }
+      },
+      "Trazabilidad": {
+        "type": "object",
+        "required": [
+          "granja",
+          "fecha_referencia",
+          "ventana",
+          "expuestos"
+        ],
+        "properties": {
+          "granja": {
+            "$ref": "#/components/schemas/GranjaResumen"
+          },
+          "fecha_referencia": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ventana": {
+            "type": "object",
+            "required": [
+              "desde",
+              "hasta",
+              "regla_id"
+            ],
+            "description": "Ventana usada, para enseñarla en la interfaz.",
+            "properties": {
+              "desde": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "hasta": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "regla_id": {
+                "type": "string"
+              }
+            }
+          },
+          "expuestos": {
+            "type": "array",
+            "description": "La línea temporal se monta en el frontend con estas visitas.",
+            "items": {
+              "$ref": "#/components/schemas/Expuesto"
+            }
+          }
+        }
+      },
+      "Expuesto": {
+        "type": "object",
+        "required": [
+          "veterinario",
+          "visita_origen",
+          "visitas_posteriores"
+        ],
+        "properties": {
+          "veterinario": {
+            "$ref": "#/components/schemas/Veterinario"
+          },
+          "visita_origen": {
+            "$ref": "#/components/schemas/Visita"
+          },
+          "visitas_posteriores": {
+            "type": "array",
+            "description": "Visitas a otras granjas dentro de la ventana hacia delante. Sus granjas son las alcanzadas.",
+            "items": {
+              "$ref": "#/components/schemas/Visita"
+            }
+          }
+        }
+      },
+      "Regla": {
+        "type": "object",
+        "required": [
+          "id",
+          "descripcion",
+          "valor",
+          "tipo"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "examples": [
+              "R01"
+            ]
+          },
+          "descripcion": {
+            "type": "string"
+          },
+          "valor": {
+            "description": "El valor tal como está en risk_config.yaml.",
+            "type": [
+              "number",
+              "string",
+              "boolean",
+              "object",
+              "array"
+            ]
+          },
+          "clave_config": {
+            "type": "string",
+            "description": "Ruta de la clave en risk_config.yaml.",
+            "examples": [
+              "sensibilidad.nucleo_genetico"
+            ]
+          },
+          "fuente": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Nombre del documento. Nulo si es un supuesto."
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "cita": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Página, artículo o apartado."
+          },
+          "tipo": {
+            "$ref": "#/components/schemas/TipoRegla"
+          }
+        }
+      },
+      "InformeImportacion": {
+        "type": "object",
+        "required": [
+          "entidad",
+          "adaptador",
+          "filas_totales",
+          "creadas",
+          "actualizadas",
+          "errores"
+        ],
+        "properties": {
+          "entidad": {
+            "type": "string",
+            "enum": [
+              "granjas",
+              "visitas",
+              "estados"
+            ]
+          },
+          "adaptador": {
+            "type": "string"
+          },
+          "filas_totales": {
+            "type": "integer"
+          },
+          "creadas": {
+            "type": "integer"
+          },
+          "actualizadas": {
+            "type": "integer"
+          },
+          "errores": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "fila",
+                "mensaje"
+              ],
+              "properties": {
+                "fila": {
+                  "type": "integer"
+                },
+                "campo": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "mensaje": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
