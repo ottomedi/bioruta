@@ -27,3 +27,10 @@ Plantilla para el 8º Hackathon de Boehringer Ingelheim España: planificación 
 ## Uso
 
 La API queda en `http://localhost:8000` y la documentación en `http://localhost:8000/docs`.
+
+## Contrato y dominio
+
+- `docs/openapi.json`: contrato de la API acordado (OpenAPI 3.1). Los tipos del frontend se generan de aquí.
+- `docs/modelo-dominio.md`: entidades, campos y por qué existe cada uno.
+- Un test (`backend/tests/test_contrato.py`) comprueba que el backend no se aleja del contrato.
+- Cambios en el contrato: solo de mutuo acuerdo y regenerando los tipos.

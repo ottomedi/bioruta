@@ -2,8 +2,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
+from .errors import registrar_errores
+from .schemas import Health
 
-app = FastAPI(title="BioRuta API", version="0.1.0")
+VERSION = "0.1.0"
+
+app = FastAPI(title="BioRuta API", version=VERSION)
+registrar_errores(app)
 
 app.add_middleware(
     CORSMiddleware,
@@ -13,6 +18,6 @@ app.add_middleware(
 )
 
 
-@app.get("/health")
-def health():
-    return {"status": "ok", "environment": settings.environment}
+@app.get("/health", response_model=Health, operation_id="getHealth")
+def health() -> Health:
+    return Health(estado="ok", version=VERSION)
