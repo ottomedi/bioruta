@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+dist/
+
+# Entorno y secretos
+.env
+
+# Bases de datos locales
+*.db
+*.sqlite3
+
+# Editores y sistema
+.vscode/
+.idea/
+.DS_Store
