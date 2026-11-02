@@ -9,12 +9,15 @@ services:
       - ./backend:/app
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
-  # El frontend lo aporta B. Descomentar cuando exista frontend/Dockerfile.
-  # frontend:
-  #   build: ./frontend
-  #   ports:
-  #     - "5173:5173"
-  #   environment:
-  #     - VITE_API_URL=http://localhost:8000
-  #   depends_on:
-  #     - backend
+  # Build de producción servida con nginx. Vite mete VITE_API_URL al compilar,
+  # por eso va como argumento de build y no como variable de entorno.
+  # Para desarrollar con recarga en caliente: cd frontend && pnpm dev
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: http://localhost:8000
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
