@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "BioRuta API",
-    "version": "0.1.0",
-    "description": "Contrato v0 (borrador del día 1). Sale de docs/modelo-dominio.md y sirve\npara generar los tipos del frontend (openapi-typescript) y los mocks de MSW\nhasta que el backend real publique su propio OpenAPI (día 3).\n\nConvenciones:\n- Las fechas y horas van en ISO 8601 con zona y se guardan en UTC. El\n  frontend las enseña en hora de Madrid.\n- Una respuesta correcta devuelve el recurso tal cual; el código HTTP indica\n  si fue bien. Todos los errores usan el esquema Error, así el frontend tiene\n  un único sitio donde leerlos.\n- Las listas paginadas devuelven items, total, page y limit.\n- Todo pide token Bearer salvo /health, /auth/login y /auth/demo.\n- Los valores numéricos del motor no viajan aquí como datos editables:\n  salen de risk_config.yaml y se consultan con GET /reglas.\n"
+    "version": "1.0.0",
+    "description": "Contrato v1, cerrado con Otto el 30 de octubre de 2026. Sale de docs/modelo-dominio.md y sirve\npara generar los tipos del frontend (openapi-typescript) y los mocks de MSW\nhasta que el backend real publique su propio OpenAPI (día 3).\n\nConvenciones:\n- Las fechas y horas van en ISO 8601 con zona y se guardan en UTC. El\n  frontend las enseña en hora de Madrid.\n- Una respuesta correcta devuelve el recurso tal cual; el código HTTP indica\n  si fue bien. Todos los errores usan el esquema Error, así el frontend tiene\n  un único sitio donde leerlos.\n- Las listas paginadas devuelven items, total, page y limit.\n- Todo pide token Bearer salvo /health, /auth/login y /auth/demo.\n- Los valores numéricos del motor no viajan aquí como datos editables:\n  salen de risk_config.json y se consultan con GET /reglas.\n"
   },
   "servers": [
     {
@@ -858,7 +858,7 @@
           "trazabilidad"
         ],
         "summary": "Quién visitó la granja en la ventana de riesgo y adónde fue después",
-        "description": "Se calcula en cada llamada con las ventanas de risk_config.yaml. Si no se\npasa fecha, se usa el inicio del último estado positivo o sospechoso de\nla granja; si no tiene ninguno, responde 422.\n",
+        "description": "Se calcula en cada llamada con las ventanas de risk_config.json. Si no se\npasa fecha, se usa el inicio del último estado positivo o sospechoso de\nla granja; si no tiene ninguno, responde 422.\n",
         "operationId": "getTrazabilidad",
         "parameters": [
           {
@@ -1527,7 +1527,7 @@
           "nivel": {
             "type": "number",
             "minimum": 0,
-            "description": "Riesgo que lleva encima. 0 es sin exposición; la escala la fija risk_config.yaml."
+            "description": "Riesgo que lleva encima. 0 es sin exposición; la escala la fija risk_config.json."
           },
           "calculado_en": {
             "type": "string",
@@ -2027,7 +2027,7 @@
             "type": "string"
           },
           "valor": {
-            "description": "El valor tal como está en risk_config.yaml.",
+            "description": "El valor tal como está en risk_config.json.",
             "type": [
               "number",
               "string",
@@ -2038,7 +2038,7 @@
           },
           "clave_config": {
             "type": "string",
-            "description": "Ruta de la clave en risk_config.yaml.",
+            "description": "Ruta de la clave en risk_config.json.",
             "examples": [
               "sensibilidad.nucleo_genetico"
             ]
