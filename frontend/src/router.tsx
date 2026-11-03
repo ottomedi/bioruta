@@ -55,6 +55,13 @@ export const routes: RouteObject[] = [
         ),
       },
       {
+        // Catálogo interno: se carga aparte para no engordar el bundle principal.
+        path: 'dev/componentes',
+        lazy: async () => ({
+          Component: (await import('./pages/ComponentesPage')).ComponentesPage,
+        }),
+      },
+      {
         path: '*',
         element: (
           <PlaceholderPage title="Página no encontrada" description="Esta dirección no existe." />

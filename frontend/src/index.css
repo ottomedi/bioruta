@@ -1,5 +1,31 @@
 @import 'tailwindcss';
 
+/*
+ * Tokens de diseño. La app se usa en el campo, a pleno sol y con guantes, así que
+ * prima el contraste y los objetivos táctiles grandes. Fuente del sistema a
+ * propósito: carga al instante y funciona sin red (PWA del día 8).
+ *
+ * Colores de riesgo: cada nivel tiene un tono fuerte (texto, borde, icono) y uno
+ * suave (fondo). Nunca se usan solos: siempre van con icono y texto.
+ */
+@theme {
+  --color-marca: oklch(0.45 0.11 155);
+  --color-marca-oscura: oklch(0.36 0.09 155);
+  --color-marca-suave: oklch(0.95 0.04 155);
+
+  --color-riesgo-alto: oklch(0.5 0.19 27);
+  --color-riesgo-alto-suave: oklch(0.95 0.03 27);
+  --color-riesgo-medio: oklch(0.5 0.12 65);
+  --color-riesgo-medio-suave: oklch(0.96 0.05 85);
+  --color-riesgo-bajo: oklch(0.47 0.12 150);
+  --color-riesgo-bajo-suave: oklch(0.96 0.04 150);
+  --color-riesgo-sin-datos: oklch(0.45 0.02 260);
+  --color-riesgo-sin-datos-suave: oklch(0.95 0.005 260);
+
+  /* Tamaño mínimo de un objetivo táctil: 48 px, como piden las guías de Android. */
+  --spacing-tactil: 3rem;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
 }

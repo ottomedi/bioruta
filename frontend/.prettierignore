@@ -1,3 +1,6 @@
 dist
 coverage
 pnpm-lock.yaml
+# Generados: los escribe una herramienta, no se formatean a mano.
+src/api/schema.d.ts
+public/mockServiceWorker.js

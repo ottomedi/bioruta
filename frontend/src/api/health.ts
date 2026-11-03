@@ -1,10 +1,7 @@
 import { API_URL } from '../config'
+import type { Health } from './types'
 
-/** Respuesta de GET /health según docs/openapi.json. */
-export interface Health {
-  readonly estado: 'ok'
-  readonly version: string
-}
+export type { Health }
 
 /** El plan gratuito de Render puede tardar cerca de un minuto en despertar. */
 export const HEALTH_TIMEOUT_MS = 60_000
