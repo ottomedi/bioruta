@@ -13,7 +13,7 @@ export interface paths {
         };
         /**
          * Comprobar que el backend responde
-         * @description Lo usa el frontend del día 1 y el ping que evita que el backend se duerma.
+         * @description Lo usa el indicador de estado del frontend y el ping que evita que el backend se duerma.
          */
         get: operations["getHealth"];
         put?: never;

@@ -1,6 +1,6 @@
 import { Link } from 'react-router'
 
-/** Entrada a la app. El botón «Entrar como demo» y el formulario llegan el día 3. */
+/** Entrada a la app. El botón «Entrar como demo» y el formulario llegan más adelante. */
 export function LoginPage() {
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center gap-6 bg-slate-50 px-4 text-center">

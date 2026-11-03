@@ -1,6 +1,6 @@
 # Modelo de dominio de BioRuta (v1)
 
-Versión cerrada con Otto el 30 de octubre de 2026, después de responder las preguntas abiertas del borrador (están al final, con lo que se decidió). Es la base de los modelos SQLModel del día 2. Si algo cambia a partir de aquí, se habla entre los dos y se actualiza este documento a la vez que el contrato, que está en [openapi.json](openapi.json). Cada entidad y cada campo lleva al lado la razón por la que está; si no encontramos razón, el campo sobra.
+Versión cerrada con Otto el 30 de octubre de 2026, después de responder las preguntas abiertas del borrador (están al final, con lo que se decidió). Es la base de los modelos SQLModel. Si algo cambia a partir de aquí, se habla entre los dos y se actualiza este documento a la vez que el contrato, que está en [openapi.json](openapi.json). Cada entidad y cada campo lleva al lado la razón por la que está; si no encontramos razón, el campo sobra.
 
 Lo he hecho con tres criterios:
 
@@ -39,7 +39,7 @@ Es el centro de todo: el motor ordena granjas, las visitas se hacen en granjas y
 | `municipio`, `provincia` | texto | Para filtrar la lista y para que el jurado sitúe las granjas sin abrir el mapa. |
 | `zona` | texto, opcional | Agrupación de granjas (comarca, integradora o «comunidad» de granjas muy conectadas). El plan pide filtrar por zona y la referencia de Machado Lab usa el paso entre comunidades como factor de riesgo. De momento solo sirve para filtrar; si una regla lo usa, tendrá su fila en la hoja. |
 
-`TipoGranja` tiene estos valores, ordenados de más a menos sensible según la propuesta: `nucleo_genetico`, `multiplicacion`, `maternidad`, `ciclo_cerrado`, `transicion`, `cebo`. El orden y los valores numéricos están pendientes de fuente (fila «Sensibilidad por tipo de granja» de la hoja). Es un enum y no texto libre porque el motor necesita un valor de sensibilidad para cada tipo; si llega un tipo nuevo el día del evento, se añade al enum y a `risk_config.json` a la vez, y si alguien se olvida de lo segundo, falla un test en vez de calcular mal en silencio.
+`TipoGranja` tiene estos valores, ordenados de más a menos sensible según la propuesta: `nucleo_genetico`, `multiplicacion`, `maternidad`, `ciclo_cerrado`, `transicion`, `cebo`. El orden y los valores numéricos están pendientes de fuente (fila «Sensibilidad por tipo de granja» de la hoja). Es un enum y no texto libre porque el motor necesita un valor de sensibilidad para cada tipo; si llegan datos con un tipo nuevo, se añade al enum y a `risk_config.json` a la vez, y si alguien se olvida de lo segundo, falla un test en vez de calcular mal en silencio.
 
 Lo que no he puesto, y por qué:
 
@@ -68,7 +68,7 @@ Historial de estados de cada granja. Cada fila dice «desde tal fecha, esta gran
 Por qué es una tabla con historial y no un campo `estado` en Granja:
 
 - La trazabilidad necesita saber cuándo cambió el estado, no solo cuál es ahora. Si un positivo se confirma el día 10, hay que mirar quién pasó por la granja los días anteriores.
-- El día 7 hay que «marcar una granja como positiva en una fecha». Eso es insertar una fila, no sobrescribir un campo, así que no se pierde el estado anterior y la demo se puede reiniciar.
+- Hay que poder «marcar una granja como positiva en una fecha». Eso es insertar una fila, no sobrescribir un campo, así que no se pierde el estado anterior y la demo se puede reiniciar.
 - Una granja puede tener a la vez PRRS estable y una sospecha de PPA. Con historial, cada una es una fila vigente y el estado actual de la granja es el de mayor riesgo entre las filas vigentes. Esa regla también necesita su fila en la hoja (por ahora es un supuesto nuestro).
 
 `zona_vigilancia` es un estado más, y no un campo booleano aparte (decidido con Otto), porque la propuesta ya la trata como un escalón de riesgo entre «sospechosa» y «sin incidencias». El inconveniente es que en la realidad una zona de vigilancia depende de un radio alrededor de un foco, y aquí la marcamos a mano o viene en los datos. Calcularla sola a partir de los focos sería más correcto, pero hace falta el radio con su fuente y no lo necesita ninguna pantalla. Lo dejo como mejora y lo apuntamos en «Supuestos y limitaciones».
@@ -157,7 +157,7 @@ Parada:
 
 Por qué guardar rutas y no solo calcularlas en el momento:
 
-- El día 7, los botones «Entrar» y «Salir» viven en la ruta del día. Hace falta una ruta guardada a la que volver.
+- Los botones «Entrar» y «Salir» viven en la ruta del día. Hace falta una ruta guardada a la que volver.
 - La PWA tiene que enseñar la ruta sin cobertura, así que tiene que existir como dato descargable.
 - «Recalcular rutas planificadas afectadas por una alerta» necesita saber qué rutas hay planificadas.
 

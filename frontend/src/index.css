@@ -3,7 +3,7 @@
 /*
  * Tokens de diseño. La app se usa en el campo, a pleno sol y con guantes, así que
  * prima el contraste y los objetivos táctiles grandes. Fuente del sistema a
- * propósito: carga al instante y funciona sin red (PWA del día 8).
+ * propósito: carga al instante y funciona sin red.
  *
  * Colores de riesgo: cada nivel tiene un tono fuerte (texto, borde, icono) y uno
  * suave (fondo). Nunca se usan solos: siempre van con icono y texto.

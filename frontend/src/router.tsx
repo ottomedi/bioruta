@@ -16,25 +16,20 @@ export const routes: RouteObject[] = [
         element: (
           <PlaceholderPage
             title="Ruta del día"
-            description="Elegir granjas, calcular la ruta y verla en el mapa (días 5 y 6)."
+            description="Elegir granjas, calcular la ruta y verla en el mapa."
           />
         ),
       },
       {
         path: 'granjas',
         element: (
-          <PlaceholderPage
-            title="Granjas"
-            description="Lista con filtros y nivel de riesgo (día 4)."
-          />
+          <PlaceholderPage title="Granjas" description="Lista con filtros y nivel de riesgo." />
         ),
       },
       { path: 'granjas/:id', element: <GranjaDetallePage /> },
       {
         path: 'visitas',
-        element: (
-          <PlaceholderPage title="Visitas" description="Registro de entradas y salidas (día 7)." />
-        ),
+        element: <PlaceholderPage title="Visitas" description="Registro de entradas y salidas." />,
       },
       {
         path: 'trazabilidad',

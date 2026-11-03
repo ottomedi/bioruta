@@ -23,7 +23,7 @@ R08 y R10 nacen como supuesto porque son decisiones de diseño del motor, no dat
 
 ## Fuentes localizadas
 
-Localizadas el 2 de noviembre de 2026. Ninguna está leída ni comprobada todavía: el día 2 hay que abrir cada una, comprobar que dice lo que creemos y apuntar la página en la fila que corresponda.
+Localizadas el 2 de noviembre de 2026. Ninguna está leída ni comprobada todavía: hay que abrir cada una, comprobar que dice lo que creemos y apuntar la página en la fila que corresponda.
 
 | Fuente | Enlace | Para qué reglas puede servir | Nota |
 |---|---|---|---|
