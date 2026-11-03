@@ -76,7 +76,7 @@ export function DataTable<T>({
           </label>
           <Search
             aria-hidden
-            className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-slate-500"
+            className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-tinta-suave"
           />
           <input
             id={searchId}
@@ -84,15 +84,15 @@ export function DataTable<T>({
             value={filtro}
             onChange={(e) => setFiltro(e.target.value)}
             placeholder="Buscar…"
-            className="min-h-tactil w-full rounded-lg border border-slate-300 bg-white pr-3 pl-10 focus-visible:outline-3 focus-visible:outline-marca"
+            className="min-h-tactil w-full rounded-md border border-linea bg-superficie pr-3 pl-10 placeholder:text-tinta-suave hover:border-campo"
           />
         </div>
       )}
 
-      <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-        <table className="w-full text-left text-sm">
+      <div className="overflow-x-auto rounded-lg border border-linea bg-superficie shadow-tarjeta">
+        <table className="w-full text-left text-[0.9375rem]">
           <caption className="sr-only">{caption}</caption>
-          <thead className="bg-slate-50 text-slate-700">
+          <thead className="border-b-2 border-campo bg-campo-suave text-campo">
             <tr>
               {columns.map((columna) => {
                 const activa = orden?.key === columna.key ? orden : null
@@ -107,7 +107,7 @@ export function DataTable<T>({
                       <button
                         type="button"
                         onClick={() => setOrden((o) => siguienteOrden(o, columna.key))}
-                        className="inline-flex min-h-tactil items-center gap-1 hover:text-slate-950"
+                        className="inline-flex min-h-tactil items-center gap-1 hover:underline hover:underline-offset-4"
                       >
                         {columna.header}
                         <IconoOrden direccion={activa?.direccion} />
@@ -122,7 +122,10 @@ export function DataTable<T>({
           </thead>
           <tbody>
             {visibles.map((fila) => (
-              <tr key={getRowId(fila)} className="border-t border-slate-100">
+              <tr
+                key={getRowId(fila)}
+                className="border-t border-linea transition-colors first:border-t-0 hover:bg-fondo"
+              >
                 {columns.map((columna) => (
                   <td key={columna.key} className="px-3 py-2.5">
                     {columna.render(fila)}
@@ -147,5 +150,5 @@ export function DataTable<T>({
 function IconoOrden({ direccion }: { readonly direccion?: Direccion }) {
   if (direccion === 'asc') return <ArrowUp aria-hidden className="size-4" />
   if (direccion === 'desc') return <ArrowDown aria-hidden className="size-4" />
-  return <ArrowUpDown aria-hidden className="size-4 text-slate-400" />
+  return <ArrowUpDown aria-hidden className="size-4 opacity-50" />
 }

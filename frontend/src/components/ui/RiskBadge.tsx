@@ -10,7 +10,7 @@ import {
 /** Cada nivel tiene su icono, para que se distinga sin ver el color. */
 const ESTILO_NIVEL: Readonly<Record<NivelRiesgo, { clases: string; icono: LucideIcon }>> = {
   alto: {
-    clases: 'border-riesgo-alto bg-riesgo-alto-suave text-riesgo-alto',
+    clases: 'border-riesgo-alto bg-riesgo-alto text-white',
     icono: OctagonAlert,
   },
   medio: {
@@ -34,7 +34,7 @@ export function RiskBadge({ nivel, label = ETIQUETA_NIVEL[nivel] }: RiskBadgePro
   const { clases, icono: Icono } = ESTILO_NIVEL[nivel]
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-sm font-semibold whitespace-nowrap ${clases}`}
+      className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-sm font-semibold whitespace-nowrap ${clases}`}
     >
       <Icono aria-hidden className="size-4" />
       {label}

@@ -2,6 +2,7 @@ import { LogIn, LogOut, MapPinOff } from 'lucide-react'
 import type { Estado, Granja } from '../api/types'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
+import { Crotal } from '../components/ui/Crotal'
 import { DataTable, type Columna } from '../components/ui/DataTable'
 import { EmptyState } from '../components/ui/EmptyState'
 import { KpiCard } from '../components/ui/KpiCard'
@@ -16,6 +17,12 @@ const NIVELES: readonly NivelRiesgo[] = ['alto', 'medio', 'bajo', 'sin_datos']
 const ESTADOS = Object.keys(NIVEL_POR_ESTADO) as Estado[]
 
 const COLUMNAS_GRANJA: readonly Columna<Granja>[] = [
+  {
+    key: 'id',
+    header: 'Código',
+    render: (g) => <Crotal label={`Granja ${g.id}`}>{String(g.id).padStart(2, '0')}</Crotal>,
+    sortValue: (g) => g.id,
+  },
   { key: 'nombre', header: 'Granja', render: (g) => g.nombre, sortValue: (g) => g.nombre },
   {
     key: 'tipo',
@@ -43,14 +50,14 @@ export function ComponentesPage() {
     <div className="flex flex-col gap-6">
       <title>Componentes · BioRuta</title>
       <header>
-        <h1 className="text-2xl font-bold">Catálogo de componentes</h1>
-        <p className="mt-1 text-slate-600">
+        <h1 className="text-3xl font-bold tracking-tight">Catálogo de componentes</h1>
+        <p className="mt-1 text-lg text-tinta-suave">
           Las piezas con las que se montan las pantallas. Datos de ejemplo de src/mocks.
         </p>
       </header>
 
       <Card title="Niveles de riesgo">
-        <p className="mb-3 text-sm text-slate-600">
+        <p className="mb-3 text-sm text-tinta-suave">
           Cada color va siempre con su icono y su texto, para que se entienda sin distinguir
           colores.
         </p>
@@ -63,6 +70,23 @@ export function ComponentesPage() {
           {ESTADOS.map((estado) => (
             <EstadoBadge key={estado} estado={estado} />
           ))}
+        </div>
+      </Card>
+
+      <Card title="Crotal">
+        <p className="mb-4 text-sm text-tinta-suave">
+          El rasgo propio de la app: los códigos de granja y los números de parada se dibujan como
+          la etiqueta amarilla de la oreja.
+        </p>
+        <div className="flex flex-wrap items-end gap-3">
+          <Crotal tamano="sm" label="Parada 1">
+            1
+          </Crotal>
+          <Crotal label="Parada 2">2</Crotal>
+          <Crotal label="Granja 14">14</Crotal>
+          <Crotal tamano="lg" label="Parada 3">
+            3
+          </Crotal>
         </div>
       </Card>
 
@@ -135,7 +159,7 @@ export function ComponentesPage() {
           />
         </Card>
         <Card title="Spinner">
-          <div className="flex items-center gap-3 text-slate-600">
+          <div className="flex items-center gap-3 text-tinta-suave">
             <Spinner /> Cargando granjas…
           </div>
         </Card>

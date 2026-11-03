@@ -16,7 +16,7 @@ interface Toast {
 const ESTILO_TIPO: Readonly<Record<TipoToast, { clases: string; icono: LucideIcon }>> = {
   exito: { clases: 'border-riesgo-bajo bg-riesgo-bajo-suave text-riesgo-bajo', icono: CircleCheck },
   error: { clases: 'border-riesgo-alto bg-riesgo-alto-suave text-riesgo-alto', icono: CircleAlert },
-  info: { clases: 'border-slate-300 bg-white text-slate-900', icono: Info },
+  info: { clases: 'border-linea bg-superficie text-tinta', icono: Info },
 }
 
 /**
@@ -88,7 +88,7 @@ function ToastItem({ toast: { id, tipo, mensaje }, onClose }: ToastItemProps) {
   const { clases, icono: Icono } = ESTILO_TIPO[tipo]
   return (
     <div
-      className={`pointer-events-auto flex w-full max-w-md items-center gap-2 rounded-lg border-2 py-1 pr-1 pl-3 font-medium shadow-lg ${clases}`}
+      className={`pointer-events-auto flex w-full max-w-md items-center gap-2 rounded-lg border-2 py-1 pr-1 pl-3 font-medium shadow-aviso ${clases}`}
     >
       <Icono aria-hidden className="size-5 shrink-0" />
       <span className="flex-1">{mensaje}</span>

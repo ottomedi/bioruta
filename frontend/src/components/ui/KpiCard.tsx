@@ -6,27 +6,34 @@ interface KpiCardProps {
   readonly unit?: string
   /** Una línea debajo del número, por ejemplo «+3,2 km respecto a la más corta». */
   readonly detail?: string
-  /** Colorea el borde izquierdo. Sin tono, la tarjeta es neutra. */
+  /** Colorea el número y el punto de estado. Sin tono, la tarjeta es neutra. */
   readonly tono?: NivelRiesgo
 }
 
-const BORDE_TONO: Readonly<Record<NivelRiesgo, string>> = {
-  alto: 'border-l-riesgo-alto',
-  medio: 'border-l-riesgo-medio',
-  bajo: 'border-l-riesgo-bajo',
-  sin_datos: 'border-l-riesgo-sin-datos',
+const COLOR_TONO: Readonly<Record<NivelRiesgo, { numero: string; punto: string }>> = {
+  alto: { numero: 'text-riesgo-alto', punto: 'bg-riesgo-alto' },
+  medio: { numero: 'text-riesgo-medio', punto: 'bg-riesgo-medio-fuerte' },
+  bajo: { numero: 'text-riesgo-bajo', punto: 'bg-riesgo-bajo' },
+  sin_datos: { numero: 'text-riesgo-sin-datos', punto: 'bg-riesgo-sin-datos' },
 }
 
 export function KpiCard({ label, value, unit, detail, tono }: KpiCardProps) {
-  const borde = tono ? BORDE_TONO[tono] : 'border-l-slate-300'
+  const color = tono ? COLOR_TONO[tono] : null
   return (
-    <div className={`rounded-xl border border-l-4 border-slate-200 bg-white p-4 ${borde}`}>
-      <p className="text-sm font-medium text-slate-600">{label}</p>
-      <p className="mt-1 text-3xl font-bold tabular-nums">
-        {value}
-        {unit && <span className="ml-1 text-lg font-semibold text-slate-600">{unit}</span>}
+    <div className="rounded-lg border border-linea bg-superficie p-4 shadow-tarjeta">
+      <p className="flex items-center gap-2 text-sm font-medium text-tinta-suave">
+        {color && <span aria-hidden className={`size-2.5 rounded-full ${color.punto}`} />}
+        {label}
       </p>
-      {detail && <p className="mt-1 text-sm text-slate-600">{detail}</p>}
+      <p
+        className={`mt-1 font-crotal text-4xl leading-none font-bold ${color?.numero ?? 'text-tinta'}`}
+      >
+        {value}
+        {unit && (
+          <span className="ml-1 font-sans text-lg font-semibold text-tinta-suave">{unit}</span>
+        )}
+      </p>
+      {detail && <p className="mt-2 text-sm text-tinta-suave">{detail}</p>}
     </div>
   )
 }

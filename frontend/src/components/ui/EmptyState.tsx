@@ -11,10 +11,10 @@ interface EmptyStateProps {
 
 export function EmptyState({ title, description, icon: Icono = Inbox, action }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-slate-300 px-4 py-10 text-center">
-      <Icono aria-hidden className="size-10 text-slate-400" />
+    <div className="flex flex-col items-center gap-2 rounded-lg border-2 border-dashed border-linea bg-fondo px-4 py-10 text-center">
+      <Icono aria-hidden className="size-10 text-campo/50" />
       <p className="text-lg font-semibold">{title}</p>
-      {description && <p className="max-w-sm text-slate-600">{description}</p>}
+      {description && <p className="max-w-sm text-tinta-suave">{description}</p>}
       {action && <div className="mt-2">{action}</div>}
     </div>
   )

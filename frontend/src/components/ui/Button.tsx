@@ -13,15 +13,16 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const CLASES_VARIANTE: Readonly<Record<Variante, string>> = {
-  primario: 'bg-marca text-white hover:bg-marca-oscura',
-  secundario: 'border border-slate-300 bg-white text-slate-900 hover:bg-slate-100',
-  peligro: 'bg-riesgo-alto text-white hover:brightness-90',
-  fantasma: 'text-slate-700 hover:bg-slate-100',
+  primario: 'bg-campo text-white shadow-tarjeta hover:bg-campo-claro',
+  secundario:
+    'border border-linea bg-superficie text-tinta hover:border-campo hover:bg-campo-suave',
+  peligro: 'bg-riesgo-alto text-white shadow-tarjeta hover:brightness-90',
+  fantasma: 'text-campo underline-offset-4 hover:bg-campo-suave hover:underline',
 }
 
 const CLASES_TAMANO: Readonly<Record<Tamano, string>> = {
   normal: 'min-h-tactil px-4 text-base',
-  grande: 'min-h-16 w-full px-6 text-lg',
+  grande: 'min-h-16 w-full px-6 text-xl',
 }
 
 export function Button({
@@ -39,7 +40,7 @@ export function Button({
       type={type}
       disabled={disabled || cargando}
       aria-busy={cargando || undefined}
-      className={`inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-marca active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 ${CLASES_VARIANTE[variante]} ${CLASES_TAMANO[tamano]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-md font-semibold transition-[background-color,border-color,filter] duration-150 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 ${CLASES_VARIANTE[variante]} ${CLASES_TAMANO[tamano]} ${className}`}
       {...props}
     >
       {cargando && <Spinner decorativo />}
