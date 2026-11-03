@@ -1,26 +1,20 @@
-import { render, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { createMemoryRouter, RouterProvider } from 'react-router'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { ToastProvider } from './components/ui/ToastProvider'
-import { routes } from './router'
+import { setupServer } from 'msw/node'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { handlers } from './mocks/handlers'
+import { conSesionDemo, renderApp as renderAt } from './test/renderApp'
 
-function renderAt(path: string) {
-  const router = createMemoryRouter(routes, { initialEntries: [path] })
-  render(
-    <ToastProvider>
-      <RouterProvider router={router} />
-    </ToastProvider>,
-  )
-  return router
-}
+const server = setupServer(...handlers)
 
+beforeAll(() => server.listen({ onUnhandledFrame: 'error' }))
+afterEach(() => server.resetHandlers())
+afterAll(() => server.close())
+
+// El acceso (login, salir, sesión caducada) se prueba en pages/LoginPage.test.tsx.
 describe('rutas', () => {
   beforeEach(() => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue(Response.json({ estado: 'ok', version: '0.1.0' })),
-    )
+    conSesionDemo()
   })
 
   it('redirige la raíz a la ruta del día', async () => {
@@ -50,18 +44,9 @@ describe('rutas', () => {
     expect(await screen.findByRole('heading', { name: title })).toBeInTheDocument()
   })
 
-  it('el login va sin navegación y entra a la ruta del día', async () => {
-    renderAt('/login')
-    expect(screen.queryByRole('navigation')).not.toBeInTheDocument()
-
-    await userEvent.click(screen.getByRole('link', { name: 'Entrar' }))
-
-    expect(await screen.findByRole('heading', { name: 'Ruta del día' })).toBeInTheDocument()
-  })
-
   it('la navegación inferior lleva a cada sección y marca la activa', async () => {
     renderAt('/ruta')
-    const inferior = screen.getByRole('navigation', { name: 'Inferior' })
+    const inferior = await screen.findByRole('navigation', { name: 'Inferior' })
 
     await userEvent.click(within(inferior).getByRole('link', { name: 'Granjas' }))
 

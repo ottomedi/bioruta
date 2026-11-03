@@ -1,4 +1,6 @@
+import { LogOut } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router'
+import { useAuth } from '../auth/authContext'
 import { HealthStatus } from '../components/HealthStatus'
 import { Crotal } from '../components/ui/Crotal'
 import { NAV_ITEMS } from './navItems'
@@ -15,6 +17,21 @@ function bottomLinkClass({ isActive }: { isActive: boolean }): string {
   const base =
     'relative flex min-w-0 flex-1 flex-col items-center gap-0.5 px-0.5 pt-2.5 pb-2 text-xs font-medium before:absolute before:inset-x-3 before:top-0 before:h-1 before:rounded-b-sm'
   return isActive ? `${base} text-crotal before:bg-crotal` : `${base} text-white/75`
+}
+
+/** En móvil solo el icono, para que quepa junto al estado del servidor. */
+function BotonSalir() {
+  const { cerrarSesion } = useAuth()
+  return (
+    <button
+      type="button"
+      onClick={cerrarSesion}
+      className="flex min-h-tactil min-w-tactil items-center justify-center gap-1.5 rounded-md px-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white focus-visible:outline-crotal"
+    >
+      <LogOut aria-hidden className="size-5" />
+      <span className="sr-only md:not-sr-only">Salir</span>
+    </button>
+  )
 }
 
 /**
@@ -38,7 +55,10 @@ export function AppLayout() {
               </NavLink>
             ))}
           </nav>
-          <HealthStatus />
+          <div className="flex items-center gap-2">
+            <HealthStatus />
+            <BotonSalir />
+          </div>
         </div>
       </header>
 
