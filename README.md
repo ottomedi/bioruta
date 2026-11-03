@@ -23,10 +23,20 @@ Plantilla para el 8º Hackathon de Boehringer Ingelheim España: planificación 
 
 - Docker y Docker Compose
 - Python 3.14 (solo si ejecutas el backend sin Docker)
+- Node 22 y pnpm (solo si ejecutas el frontend sin Docker; pnpm se activa con `corepack enable pnpm`)
 
 ## Uso
 
-La API queda en `http://localhost:8000` y la documentación en `http://localhost:8000/docs`.
+La API queda en `http://localhost:8000` y la documentación en `http://localhost:8000/docs`. El frontend queda en `http://localhost:5173`.
+
+Frontend sin Docker:
+
+    cd frontend
+    pnpm install
+    pnpm dev        # http://localhost:5173, contra el backend local
+    pnpm test       # tests con Vitest
+    pnpm lint       # oxlint
+    pnpm build      # build de producción, contra el backend de Render
 
 ## Contrato y dominio
 

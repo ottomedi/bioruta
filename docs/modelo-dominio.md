@@ -1,11 +1,11 @@
-# Modelo de dominio de BioRuta (borrador v0)
+# Modelo de dominio de BioRuta (v1)
 
-Borrador para la sesión del día 1 con Otto. Es el punto de partida para escribir `openapi.json` y los modelos SQLModel del día 2, así que todo se puede discutir. El contrato v0 que sale de aquí está en [openapi.json](openapi.json). Cada entidad y cada campo lleva al lado la razón por la que está; si no encontramos razón, el campo sobra.
+Versión cerrada con Otto el 30 de octubre de 2026, después de responder las preguntas abiertas del borrador (están al final, con lo que se decidió). Es la base de los modelos SQLModel del día 2. Si algo cambia a partir de aquí, se habla entre los dos y se actualiza este documento a la vez que el contrato, que está en [openapi.json](openapi.json). Cada entidad y cada campo lleva al lado la razón por la que está; si no encontramos razón, el campo sobra.
 
 Lo he hecho con tres criterios:
 
 1. Solo entra lo que necesita alguna de las cuatro cosas que enseña la demo: comparar rutas, registrar una visita, simular un positivo y ver la trazabilidad. Si un dato no lo usa ninguna, se queda fuera aunque sea realista.
-2. Los números del motor (sensibilidades, riesgos, horas de vacío) no van en la base de datos sino en `risk_config.yaml`, porque cada uno tiene que apuntar a una fila de `docs/reglas.md` con su fuente. Si estuvieran en la base de datos, cambiarlos no dejaría rastro en Git y no podríamos enseñar de dónde sale cada cifra.
+2. Los números del motor (sensibilidades, riesgos, horas de vacío) no van en la base de datos sino en `risk_config.json`, porque cada uno tiene que apuntar a una fila de `docs/reglas.md` con su fuente. Si estuvieran en la base de datos, cambiarlos no dejaría rastro en Git y no podríamos enseñar de dónde sale cada cifra.
 3. Lo que se puede calcular no se guarda. El riesgo actual del veterinario, el estado sanitario vigente de una granja o la lista de expuestos tras un brote se calculan a partir de las visitas y del historial. Así no hay dos versiones del mismo dato que puedan contradecirse.
 
 ## Vista general
@@ -16,13 +16,14 @@ erDiagram
     GRANJA ||--o{ VISITA : "recibe"
     GRANJA ||--o{ PARADA : "aparece en"
     VETERINARIO ||--o{ VISITA : "hace"
+    VISITA ||--o{ VISITA_MEDIDA : "aplica"
     VETERINARIO ||--o{ RUTA : "tiene"
     RUTA ||--|{ PARADA : "se compone de"
     PARADA |o--o| VISITA : "se cumple con"
     USUARIO |o--|| VETERINARIO : "inicia sesión como"
 ```
 
-Hay cinco entidades de dominio (Granja, EstadoSanitario, Veterinario, Visita y Ruta con sus Paradas) y una técnica (Usuario). La hoja de reglas y la trazabilidad también forman parte del dominio, pero no son tablas; se explican al final.
+Hay cinco entidades de dominio (Granja, EstadoSanitario, Veterinario, Visita y Ruta con sus Paradas), una tabla intermedia (VisitaMedida, que guarda las medidas de cada visita) y una entidad técnica (Usuario). La hoja de reglas y la trazabilidad también forman parte del dominio, pero no son tablas; se explican al final.
 
 ## Granja
 
@@ -33,12 +34,12 @@ Es el centro de todo: el motor ordena granjas, las visitas se hacen en granjas y
 | `id` | entero | Clave interna. No usamos el código REGA como clave porque en los datos del evento puede faltar o venir con otro formato, y no queremos que eso rompa las relaciones. |
 | `codigo_rega` | texto, único, opcional | Es el identificador oficial de las explotaciones ganaderas en España. Si los datos del evento lo traen, el adaptador lo usa para no duplicar granjas al importar dos veces. Es opcional porque los datos simulados no lo necesitan. |
 | `nombre` | texto | Lo que lee el veterinario en la lista y en el mapa. Un código no se entiende en una demo. |
-| `tipo` | enum `TipoGranja` | Define la sensibilidad de la granja (cuánto se pierde si se contagia), que es la mitad de la función de coste. El valor de sensibilidad de cada tipo está en `risk_config.yaml`, no aquí. |
+| `tipo` | enum `TipoGranja` | Define la sensibilidad de la granja (cuánto se pierde si se contagia), que es la mitad de la función de coste. El valor de sensibilidad de cada tipo está en `risk_config.json`, no aquí. |
 | `latitud`, `longitud` | decimales (WGS84) | Las necesitan el cálculo de distancias (Haversine) y el mapa. WGS84 porque es lo que usan Leaflet y OSRM y lo que suelen traer los datos abiertos. |
 | `municipio`, `provincia` | texto | Para filtrar la lista y para que el jurado sitúe las granjas sin abrir el mapa. |
 | `zona` | texto, opcional | Agrupación de granjas (comarca, integradora o «comunidad» de granjas muy conectadas). El plan pide filtrar por zona y la referencia de Machado Lab usa el paso entre comunidades como factor de riesgo. De momento solo sirve para filtrar; si una regla lo usa, tendrá su fila en la hoja. |
 
-`TipoGranja` tiene estos valores, ordenados de más a menos sensible según la propuesta: `nucleo_genetico`, `multiplicacion`, `maternidad`, `ciclo_cerrado`, `transicion`, `cebo`. El orden y los valores numéricos están pendientes de fuente (fila «Sensibilidad por tipo de granja» de la hoja). Es un enum y no texto libre porque el motor necesita un valor de sensibilidad para cada tipo; si llega un tipo nuevo el día del evento, se añade al enum y a `risk_config.yaml` a la vez, y si alguien se olvida de lo segundo, falla un test en vez de calcular mal en silencio.
+`TipoGranja` tiene estos valores, ordenados de más a menos sensible según la propuesta: `nucleo_genetico`, `multiplicacion`, `maternidad`, `ciclo_cerrado`, `transicion`, `cebo`. El orden y los valores numéricos están pendientes de fuente (fila «Sensibilidad por tipo de granja» de la hoja). Es un enum y no texto libre porque el motor necesita un valor de sensibilidad para cada tipo; si llega un tipo nuevo el día del evento, se añade al enum y a `risk_config.json` a la vez, y si alguien se olvida de lo segundo, falla un test en vez de calcular mal en silencio.
 
 Lo que no he puesto, y por qué:
 
@@ -60,7 +61,7 @@ Historial de estados de cada granja. Cada fila dice «desde tal fecha, esta gran
 | `hasta` | fecha y hora, opcional | Cuándo deja de valer. Nulo mientras esté vigente. |
 | `origen` | enum: `importado`, `alerta`, `seed` | Para distinguir en la demo y en los tests un estado que vino en los datos de uno que alguien marcó con «Simular positivo». También sirve para que «Reiniciar demo» borre solo las alertas. |
 
-`Estado` tiene cuatro valores, de más a menos riesgo: `positiva`, `sospechosa`, `zona_vigilancia`, `sin_incidencias`. Cuánto riesgo emite cada uno está en `risk_config.yaml`.
+`Estado` tiene cuatro valores, de más a menos riesgo: `positiva`, `sospechosa`, `zona_vigilancia`, `sin_incidencias`. Cuánto riesgo emite cada uno está en `risk_config.json`.
 
 `Enfermedad` empieza con `ppa`, `prrs` y `otra`. Son las dos que nombra la propuesta; `otra` está para que un dato importado con una enfermedad que no conocemos (PED, por ejemplo) no se pierda ni rompa el importador.
 
@@ -70,7 +71,7 @@ Por qué es una tabla con historial y no un campo `estado` en Granja:
 - El día 7 hay que «marcar una granja como positiva en una fecha». Eso es insertar una fila, no sobrescribir un campo, así que no se pierde el estado anterior y la demo se puede reiniciar.
 - Una granja puede tener a la vez PRRS estable y una sospecha de PPA. Con historial, cada una es una fila vigente y el estado actual de la granja es el de mayor riesgo entre las filas vigentes. Esa regla también necesita su fila en la hoja (por ahora es un supuesto nuestro).
 
-He metido `zona_vigilancia` como un estado más, y no como un campo booleano aparte, porque la propuesta ya la trata como un escalón de riesgo entre «sospechosa» y «sin incidencias». El inconveniente es que en la realidad una zona de vigilancia depende de un radio alrededor de un foco, y aquí la marcamos a mano o viene en los datos. Calcularla sola a partir de los focos sería más correcto, pero hace falta el radio con su fuente y no lo necesita ninguna pantalla. Lo dejo como mejora y lo apuntamos en «Supuestos y limitaciones».
+`zona_vigilancia` es un estado más, y no un campo booleano aparte (decidido con Otto), porque la propuesta ya la trata como un escalón de riesgo entre «sospechosa» y «sin incidencias». El inconveniente es que en la realidad una zona de vigilancia depende de un radio alrededor de un foco, y aquí la marcamos a mano o viene en los datos. Calcularla sola a partir de los focos sería más correcto, pero hace falta el radio con su fuente y no lo necesita ninguna pantalla. Lo dejo como mejora y lo apuntamos en «Supuestos y limitaciones».
 
 No hay entidad Alerta. Una alerta es un EstadoSanitario nuevo con `origen = alerta`. Tenerlas por separado obligaría a mantener sincronizadas dos tablas que dicen lo mismo.
 
@@ -97,13 +98,24 @@ Lo que pasó de verdad: un veterinario entró en una granja y salió.
 | `granja_id` | FK a Granja | Dónde fue. |
 | `entrada` | fecha y hora | Lo registra el botón «Entrar». Hace falta la hora y no solo el día porque el vacío sanitario se cuenta en horas. |
 | `salida` | fecha y hora, opcional | Lo registra el botón «Salir». Nulo mientras la visita está abierta. El vacío sanitario empieza a contar desde aquí. |
-| `medidas` | lista de enum `Medida` | Lo que hizo el veterinario al salir (ducha, cambio de ropa, desinfección de calzado). Cada medida reduce el riesgo que lleva encima según la hoja de reglas. Se marca al pulsar «Salir». |
+| `medidas` | lista de enum `Medida`, en la tabla VisitaMedida | Lo que hizo el veterinario al salir (ducha, cambio de ropa, desinfección de calzado). Cada medida reduce el riesgo que lleva encima según la hoja de reglas. Se marca al pulsar «Salir». No es una columna de Visita: cada medida es una fila de VisitaMedida (ver abajo). |
 | `parada_id` | FK a Parada, opcional | Une la visita con la parada planificada, para marcarla como hecha en la ruta del día. Es opcional porque una visita puede ser imprevista o venir importada sin ruta. |
 | `estado_granja_en_visita` | enum `Estado` | Una copia del estado que tenía la granja al entrar. Es la única excepción al criterio de no guardar lo calculable, y la explico abajo. |
 
 `Medida` empieza con `ducha`, `cambio_ropa` y `desinfeccion_calzado`. Cada una tiene su fila en la hoja; si no encontramos fuente para cuánto reduce el riesgo, queda como supuesto configurable.
 
-Por qué `medidas` es una lista dentro de la visita y no una tabla aparte: siempre se leen y se escriben junto con la visita, no tienen datos propios y son pocas. En SQLite y PostgreSQL se guarda como JSON. Si un día una medida necesita hora o responsable, se pasa a tabla.
+VisitaMedida:
+
+| Campo | Tipo | Por qué está |
+|---|---|---|
+| `visita_id` | FK a Visita | A qué visita pertenece la medida. Si se borra la visita, se borran sus medidas. |
+| `medida` | enum `Medida` | Qué medida se aplicó. |
+
+La clave primaria es el par (`visita_id`, `medida`), así que la misma medida no puede aparecer dos veces en una visita. Una visita sin medidas simplemente no tiene filas.
+
+Por qué una tabla intermedia y no una lista en JSON dentro de la visita (decidido con Otto): la base de datos comprueba que cada medida es un valor válido del enum, se puede filtrar y contar por medida con SQL normal y funciona igual en SQLite y en PostgreSQL. Si un día una medida necesita hora o responsable, se añade la columna a esta tabla.
+
+En la API no se nota. La visita sigue recibiendo y devolviendo `medidas` como una lista de valores de `Medida`, y es el backend el que la convierte en filas. Así el contrato no cambia y los tipos del frontend tampoco.
 
 Por qué se copia el estado de la granja en la visita: si una granja era `sin_incidencias` el lunes y se marca positiva el miércoles con fecha del miércoles, la visita del lunes no debe aparecer de repente como «visita a una positiva». La copia deja la foto de lo que se sabía al entrar. La trazabilidad, en cambio, usa el historial, porque su pregunta es otra: no qué sabía el veterinario, sino quién pudo contagiarse.
 
@@ -123,8 +135,8 @@ Ruta:
 |---|---|---|
 | `id` | entero | Clave interna. |
 | `veterinario_id` | FK a Veterinario | De quién es la ruta. Su base es el punto de salida. |
-| `fecha` | fecha | El día al que se refiere. Un veterinario tiene como mucho una ruta por día. |
-| `criterio` | enum: `mas_corta`, `segura` | Qué ruta eligió el veterinario. El endpoint calcula las dos para compararlas, pero solo se guarda la elegida. |
+| `fecha` | fecha | El día al que se refiere. Un veterinario tiene como mucho una ruta por día (decidido con Otto, por simplicidad): hay una restricción única sobre (`veterinario_id`, `fecha`) para que lo garantice la base de datos y no solo el código. |
+| `criterio` | enum: `mas_corta`, `segura` | Qué ruta eligió el veterinario. El endpoint calcula las dos para compararlas, pero solo se guarda la elegida; la alternativa no tiene uso una vez elegida (decidido con Otto). |
 | `km_total` | decimal | Para el panel comparativo y para el README («+X km a cambio de 0 exposiciones»). |
 | `exposiciones` | entero | Número de transiciones peligrosas de la ruta. Es la otra cifra del panel. |
 | `estado` | enum: `planificada`, `en_curso`, `cerrada`, `afectada_por_alerta` | Para que la pantalla de la ruta del día sepa qué enseñar y para marcar las rutas que hay que recalcular después de una alerta. |
@@ -141,7 +153,7 @@ Parada:
 | `explicacion` | texto | La frase que justifica la posición («Va primero: núcleo genético y llegas sin exposición previa»). |
 | `regla_id` | texto, opcional | La fila de la hoja de reglas que decidió la posición (por ejemplo `R03`). La interfaz la usa para enlazar a `/fuentes`. Es nula si la posición la decidió solo la distancia. |
 
-`km_total`, `exposiciones`, `riesgo_llegada` y `explicacion` también se podrían calcular. Los guardo porque son la salida del motor en un momento dado con unas reglas dadas. Si alguien cambia `risk_config.yaml`, la ruta de ayer tiene que seguir enseñando lo que se le dijo ayer al veterinario, no lo que diría hoy el motor.
+`km_total`, `exposiciones`, `riesgo_llegada` y `explicacion` también se podrían calcular. Los guardo porque son la salida del motor en un momento dado con unas reglas dadas. Si alguien cambia `risk_config.json`, la ruta de ayer tiene que seguir enseñando lo que se le dijo ayer al veterinario, no lo que diría hoy el motor.
 
 Por qué guardar rutas y no solo calcularlas en el momento:
 
@@ -166,7 +178,7 @@ Usuario y Veterinario van separados porque son cosas distintas: uno es una cuent
 
 ### Hoja de reglas
 
-Cada regla tiene un identificador (`R01`, `R02`...), una descripción, un valor, una fuente, una cita o página y un tipo (`normativa`, `guia` o `supuesto`). Vive en `docs/reglas.md` y sus valores se usan en `risk_config.yaml`. `GET /reglas` la devuelve en JSON y la pantalla `/fuentes` la enseña.
+Cada regla tiene un identificador (`R01`, `R02`...), una descripción, un valor, una fuente, una cita o página y un tipo (`normativa`, `guia` o `supuesto`). Vive en `docs/reglas.md` y sus valores se usan en `risk_config.json`. `GET /reglas` la devuelve en JSON y la pantalla `/fuentes` la enseña.
 
 No va en la base de datos porque solo cambia con un cambio de código revisado en una PR. Así el historial de Git es el registro de quién cambió qué regla y por qué, y nadie la puede tocar desde la demo.
 
@@ -201,9 +213,12 @@ Con este modelo la consulta solo necesita dos tablas (Visita y EstadoSanitario),
 - Empresas, integradoras, roles y permisos. Un solo usuario de demo.
 - Movimientos de animales entre granjas. Son otra vía de contagio, pero el reto trata de la ruta del veterinario.
 
-## Preguntas para cerrar con Otto
+## Decisiones cerradas con Otto (30 de octubre de 2026)
 
-1. ¿Guardamos solo la ruta elegida, o también la alternativa para enseñar la comparación de días anteriores? Mi propuesta es solo la elegida.
-2. ¿`zona_vigilancia` como estado (como propongo) o como campo aparte calculado por radio? Depende de si encontramos el radio con fuente.
-3. ¿Un veterinario puede tener más de una ruta el mismo día (mañana y tarde)? Propongo que no hasta que lo pida algo.
-4. ¿JSON para `medidas` o tabla intermedia? JSON es más rápido de montar; la tabla es más fácil de filtrar. Ninguna pantalla filtra por medida.
+| Pregunta del borrador | Decisión |
+|---|---|
+| ¿Guardamos solo la ruta elegida o también la alternativa? | Solo la elegida. La alternativa no tiene uso una vez elegida. |
+| ¿`zona_vigilancia` como estado o como campo calculado por radio? | Como estado. El cálculo por radio queda como mejora en «Supuestos y limitaciones». |
+| ¿Puede un veterinario tener más de una ruta el mismo día? | No, una sola, por simplicidad. Restricción única sobre (`veterinario_id`, `fecha`). |
+| ¿`medidas` en JSON o en tabla intermedia? | Tabla intermedia VisitaMedida. En la API sigue siendo una lista. |
+| ¿`risk_config` y `mapping` en JSON o en YAML? | JSON (2 de noviembre), igual que el contrato. JSON no admite comentarios, así que cada valor de `risk_config.json` lleva un campo `regla` con el identificador de su fila en la hoja (por ejemplo `"regla": "R03"`). |
