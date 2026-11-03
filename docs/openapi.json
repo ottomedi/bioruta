@@ -3,7 +3,7 @@
   "info": {
     "title": "BioRuta API",
     "version": "1.0.0",
-    "description": "Contrato v1, cerrado con Otto el 30 de octubre de 2026. Sale de docs/modelo-dominio.md y sirve\npara generar los tipos del frontend (openapi-typescript) y los mocks de MSW\nhasta que el backend real publique su propio OpenAPI (día 3).\n\nConvenciones:\n- Las fechas y horas van en ISO 8601 con zona y se guardan en UTC. El\n  frontend las enseña en hora de Madrid.\n- Una respuesta correcta devuelve el recurso tal cual; el código HTTP indica\n  si fue bien. Todos los errores usan el esquema Error, así el frontend tiene\n  un único sitio donde leerlos.\n- Las listas paginadas devuelven items, total, page y limit.\n- Todo pide token Bearer salvo /health, /auth/login y /auth/demo.\n- Los valores numéricos del motor no viajan aquí como datos editables:\n  salen de risk_config.json y se consultan con GET /reglas.\n"
+    "description": "Contrato v1, cerrado con Otto el 30 de octubre de 2026. Sale de docs/modelo-dominio.md y sirve\npara generar los tipos del frontend (openapi-typescript) y los mocks de MSW\nhasta que el backend real publique su propio OpenAPI.\n\nConvenciones:\n- Las fechas y horas van en ISO 8601 con zona y se guardan en UTC. El\n  frontend las enseña en hora de Madrid.\n- Una respuesta correcta devuelve el recurso tal cual; el código HTTP indica\n  si fue bien. Todos los errores usan el esquema Error, así el frontend tiene\n  un único sitio donde leerlos.\n- Las listas paginadas devuelven items, total, page y limit.\n- Todo pide token Bearer salvo /health, /auth/login y /auth/demo.\n- Los valores numéricos del motor no viajan aquí como datos editables:\n  salen de risk_config.json y se consultan con GET /reglas.\n"
   },
   "servers": [
     {
@@ -73,7 +73,7 @@
           "sistema"
         ],
         "summary": "Comprobar que el backend responde",
-        "description": "Lo usa el frontend del día 1 y el ping que evita que el backend se duerma.",
+        "description": "Lo usa el indicador de estado del frontend y el ping que evita que el backend se duerma.",
         "security": [],
         "operationId": "getHealth",
         "responses": {

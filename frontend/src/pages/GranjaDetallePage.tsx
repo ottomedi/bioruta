@@ -6,7 +6,7 @@ export function GranjaDetallePage() {
   return (
     <PlaceholderPage
       title={`Granja ${id ?? ''}`.trim()}
-      description="Datos, historial sanitario y últimas visitas (día 4)."
+      description="Datos, historial sanitario y últimas visitas."
     />
   )
 }

@@ -1,31 +1,36 @@
 import { NavLink, Outlet } from 'react-router'
 import { HealthStatus } from '../components/HealthStatus'
+import { Crotal } from '../components/ui/Crotal'
 import { NAV_ITEMS } from './navItems'
 
 function navLinkClass({ isActive }: { isActive: boolean }): string {
-  const base = 'flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium'
+  const base =
+    'relative flex min-h-tactil items-center gap-2 px-3 text-[0.9375rem] font-medium transition-colors after:absolute after:inset-x-3 after:bottom-0 after:h-1 after:rounded-t-sm'
   return isActive
-    ? `${base} bg-green-100 text-green-900`
-    : `${base} text-slate-700 hover:bg-slate-100`
+    ? `${base} text-white after:bg-crotal`
+    : `${base} text-white/75 hover:text-white hover:after:bg-white/30`
 }
 
 function bottomLinkClass({ isActive }: { isActive: boolean }): string {
   const base =
-    'flex min-w-0 flex-1 flex-col items-center gap-0.5 px-0.5 py-2 text-[11px] font-medium'
-  return isActive ? `${base} text-green-800` : `${base} text-slate-600`
+    'relative flex min-w-0 flex-1 flex-col items-center gap-0.5 px-0.5 pt-2.5 pb-2 text-xs font-medium before:absolute before:inset-x-3 before:top-0 before:h-1 before:rounded-b-sm'
+  return isActive ? `${base} text-crotal before:bg-crotal` : `${base} text-white/75`
 }
 
 /**
- * Layout pensado primero para móvil: barra superior y navegación inferior.
- * Desde md la navegación pasa a la barra superior.
+ * Layout pensado primero para móvil: barra superior y navegación inferior, las
+ * dos en verde campo. Desde md la navegación pasa a la barra superior.
  */
 export function AppLayout() {
   return (
-    <div className="flex min-h-dvh flex-col bg-slate-50 text-slate-900">
-      <header className="sticky top-0 z-10 border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-          <span className="text-lg font-bold text-green-800">BioRuta</span>
-          <nav aria-label="Principal" className="hidden gap-1 md:flex">
+    <div className="flex min-h-dvh flex-col bg-fondo text-tinta">
+      <header className="sticky top-0 z-10 bg-campo text-white shadow-aviso">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-2 md:py-0">
+          <span className="flex items-center gap-2 text-xl font-bold tracking-tight">
+            <Crotal tamano="sm">BR</Crotal>
+            BioRuta
+          </span>
+          <nav aria-label="Principal" className="hidden self-stretch md:flex">
             {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
               <NavLink key={to} to={to} className={navLinkClass}>
                 <Icon aria-hidden className="size-4" />
@@ -37,13 +42,13 @@ export function AppLayout() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 pb-24 md:pb-6">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 pb-28 md:py-8 md:pb-8">
         <Outlet />
       </main>
 
       <nav
         aria-label="Inferior"
-        className="fixed inset-x-0 bottom-0 z-10 flex border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] md:hidden"
+        className="fixed inset-x-0 bottom-0 z-10 flex bg-campo pb-[env(safe-area-inset-bottom)] shadow-aviso md:hidden"
       >
         {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
           <NavLink key={to} to={to} className={bottomLinkClass}>

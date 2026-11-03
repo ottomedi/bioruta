@@ -12,6 +12,10 @@ interface HealthStatusProps {
   readonly load?: (signal: AbortSignal) => Promise<Health>
 }
 
+/** Va en la cabecera verde: pastilla clara sobre fondo oscuro. */
+const PASTILLA =
+  'flex items-center gap-1.5 rounded-md bg-white/10 px-2.5 py-1 text-sm font-medium ring-1 ring-white/15'
+
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'Error desconocido.'
 }
@@ -37,7 +41,7 @@ export function HealthStatus({ load = fetchHealth }: HealthStatusProps) {
 
   if (state.kind === 'cargando') {
     return (
-      <p role="status" className="flex items-center gap-1.5 text-sm text-slate-600">
+      <p role="status" className={`${PASTILLA} text-white/80`}>
         <LoaderCircle aria-hidden className="size-4 animate-spin" />
         Conectando con el servidor… (puede tardar hasta 1 min)
       </p>
@@ -46,20 +50,16 @@ export function HealthStatus({ load = fetchHealth }: HealthStatusProps) {
 
   if (state.kind === 'error') {
     return (
-      <p
-        role="status"
-        className="flex items-center gap-1.5 text-sm text-red-700"
-        title={state.message}
-      >
-        <CircleAlert aria-hidden className="size-4" />
+      <p role="status" className={`${PASTILLA} text-white`} title={state.message}>
+        <CircleAlert aria-hidden className="size-4 text-crotal" />
         Servidor no disponible
       </p>
     )
   }
 
   return (
-    <p role="status" className="flex items-center gap-1.5 text-sm text-green-700">
-      <CircleCheck aria-hidden className="size-4" />
+    <p role="status" className={`${PASTILLA} text-white`}>
+      <CircleCheck aria-hidden className="size-4 text-riesgo-bajo-suave" />
       Servidor en línea (v{state.health.version})
     </p>
   )

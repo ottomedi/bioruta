@@ -2,11 +2,16 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { ToastProvider } from './components/ui/ToastProvider'
 import { routes } from './router'
 
 function renderAt(path: string) {
   const router = createMemoryRouter(routes, { initialEntries: [path] })
-  render(<RouterProvider router={router} />)
+  render(
+    <ToastProvider>
+      <RouterProvider router={router} />
+    </ToastProvider>,
+  )
   return router
 }
 
@@ -65,5 +70,15 @@ describe('rutas', () => {
       'aria-current',
       'page',
     )
+  })
+
+  it('abre el catálogo de componentes, que no sale en la navegación', async () => {
+    renderAt('/dev/componentes')
+
+    expect(
+      await screen.findByRole('heading', { name: 'Catálogo de componentes' }),
+    ).toBeInTheDocument()
+    expect(screen.getByText('Exposiciones (segura)')).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /Componentes/ })).not.toBeInTheDocument()
   })
 })

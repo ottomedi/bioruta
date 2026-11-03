@@ -1,5 +1,71 @@
 @import 'tailwindcss';
 
+/*
+ * Tokens de diseño. La app se usa en el campo, a pleno sol y con guantes:
+ * fondo claro, mucho contraste y objetivos táctiles grandes.
+ *
+ * El mundo visual sale del crotal, la etiqueta amarilla que llevan los cerdos en
+ * la oreja: los códigos de granja y los números de parada se dibujan como
+ * crotales. La estructura (cabecera y navegación) va en verde campo oscuro.
+ * Barlow, de la familia de la rotulación de carreteras, se sirve desde el propio
+ * proyecto para que funcione sin red.
+ *
+ * Colores de riesgo: cada nivel tiene un tono fuerte (texto, relleno, icono) y uno
+ * suave (fondo). Nunca se usan solos: siempre van con icono y texto.
+ */
+@theme {
+  --font-sans: 'Barlow', ui-sans-serif, system-ui, sans-serif;
+  --font-crotal: 'Barlow Condensed', 'Barlow', ui-sans-serif, sans-serif;
+
+  --color-campo: oklch(0.35 0.075 158);
+  --color-campo-claro: oklch(0.42 0.085 158);
+  --color-campo-suave: oklch(0.93 0.025 162);
+
+  --color-fondo: oklch(0.965 0.007 150);
+  --color-superficie: oklch(1 0 0);
+  --color-linea: oklch(0.88 0.012 155);
+  --color-tinta: oklch(0.23 0.02 160);
+  --color-tinta-suave: oklch(0.43 0.02 160);
+
+  --color-crotal: oklch(0.87 0.165 94);
+  --color-crotal-oscuro: oklch(0.78 0.16 88);
+  --color-crotal-tinta: oklch(0.22 0.03 90);
+
+  --color-riesgo-alto: oklch(0.5 0.19 27);
+  --color-riesgo-alto-suave: oklch(0.95 0.03 27);
+  --color-riesgo-medio: oklch(0.5 0.12 65);
+  --color-riesgo-medio-fuerte: oklch(0.8 0.15 75);
+  --color-riesgo-medio-suave: oklch(0.96 0.05 85);
+  --color-riesgo-bajo: oklch(0.45 0.11 150);
+  --color-riesgo-bajo-suave: oklch(0.95 0.04 150);
+  --color-riesgo-sin-datos: oklch(0.45 0.02 260);
+  --color-riesgo-sin-datos-suave: oklch(0.94 0.006 260);
+
+  --shadow-tarjeta:
+    0 1px 2px oklch(0.23 0.02 160 / 0.06), 0 6px 16px -8px oklch(0.23 0.02 160 / 0.14);
+  --shadow-aviso:
+    0 2px 4px oklch(0.23 0.02 160 / 0.08), 0 12px 28px -10px oklch(0.23 0.02 160 / 0.3);
+
+  /* Tamaño mínimo de un objetivo táctil: 48 px, como piden las guías de Android. */
+  --spacing-tactil: 3rem;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
+  background-color: var(--color-fondo);
+  color: var(--color-tinta);
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  accent-color: var(--color-campo);
+  caret-color: var(--color-campo);
+}
+
+::selection {
+  background-color: var(--color-crotal);
+  color: var(--color-crotal-tinta);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-campo);
+  outline-offset: 2px;
 }
