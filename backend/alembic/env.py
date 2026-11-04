@@ -1,11 +1,13 @@
 from logging.config import fileConfig
 
-from alembic import context
 from sqlalchemy import engine_from_config, pool
 from sqlmodel import SQLModel
 
-from app import models  # noqa: F401  (importarlo registra las tablas en SQLModel.metadata)
-from app import tipos  # noqa: F401  (tipo UtcDateTime usado por las migraciones)
+from alembic import context
+from app import (
+    models,  # noqa: F401  (importarlo registra las tablas en SQLModel.metadata)
+    tipos,  # noqa: F401  (tipo UtcDateTime usado por las migraciones)
+)
 from app.db import URL
 
 # this is the Alembic Config object, which provides

@@ -5,7 +5,13 @@ from sqlalchemy import Enum as SAEnum
 from sqlmodel import Field, SQLModel
 
 from .enums import (
-    Criterio, Enfermedad, Estado, EstadoRuta, Medida, Origen, TipoGranja,
+    Criterio,
+    Enfermedad,
+    Estado,
+    EstadoRuta,
+    Medida,
+    Origen,
+    TipoGranja,
 )
 from .tipos import UtcDateTime
 
