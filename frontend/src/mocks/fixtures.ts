@@ -1,4 +1,4 @@
-import type { EstadoSanitario, Granja, GranjaResumen, Regla, Usuario, Visita } from '../api/types'
+import type { EstadoSanitario, Granja, GranjaResumen, Usuario, Visita } from '../api/types'
 
 /**
  * Datos falsos para trabajar sin backend. Las granjas están en La Litera
@@ -257,25 +257,3 @@ export const VISITAS: readonly Visita[] = [
     estado_granja_en_visita: 'sin_incidencias',
   },
 ]
-
-/** Las filas de docs/reglas.md. Hasta que tengan fuente, todas son supuestos. */
-export const REGLAS: readonly Regla[] = [
-  ['R01', 'Orden de visita según estado sanitario'],
-  ['R02', 'Horas de vacío tras visitar una granja positiva o sospechosa'],
-  ['R03', 'Reducción de riesgo por cada medida (ducha, cambio de ropa, calzado)'],
-  ['R04', 'Sensibilidad por tipo de granja'],
-  ['R05', 'Riesgo que emite cada estado sanitario'],
-  ['R06', 'Cómo baja el riesgo con el tiempo desde la salida'],
-  ['R07', 'Umbral de riesgo para entrar en una granja de sensibilidad alta'],
-  ['R08', 'Pesos α y β de la función de coste'],
-  ['R09', 'Ventana de trazabilidad'],
-  ['R10', 'Estado de una granja con varios estados vigentes'],
-].map(([id, descripcion]) => ({
-  id,
-  descripcion,
-  valor: 'por fijar',
-  fuente: null,
-  url: null,
-  cita: null,
-  tipo: 'supuesto',
-}))

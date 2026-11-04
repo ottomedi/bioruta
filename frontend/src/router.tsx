@@ -4,6 +4,7 @@ import { AppLayout } from './layout/AppLayout'
 import { GranjaDetallePage } from './pages/granjas/GranjaDetallePage'
 import { GranjasPage } from './pages/granjas/GranjasPage'
 import { ImportarPage } from './pages/granjas/ImportarPage'
+import { FuentesPage } from './pages/fuentes/FuentesPage'
 import { LoginPage } from './pages/LoginPage'
 import { PlaceholderPage } from './pages/PlaceholderPage'
 
@@ -45,15 +46,7 @@ export const routes: RouteObject[] = [
               />
             ),
           },
-          {
-            path: 'fuentes',
-            element: (
-              <PlaceholderPage
-                title="De dónde salen las reglas"
-                description="Cada regla del motor con su fuente pública o marcada como supuesto."
-              />
-            ),
-          },
+          { path: 'fuentes', element: <FuentesPage /> },
           {
             // Catálogo interno: se carga aparte para no engordar el bundle principal.
             path: 'dev/componentes',
