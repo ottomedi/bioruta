@@ -16,4 +16,12 @@ export function resolveApiUrl(raw: string | undefined, isProd: boolean): string 
   return value.replace(/\/+$/, '')
 }
 
+/** Solo «true» activa una opción, para que un valor mal escrito no la active por error. */
+export function parseFlag(raw: string | undefined): boolean {
+  return raw?.trim().toLowerCase() === 'true'
+}
+
 export const API_URL = resolveApiUrl(import.meta.env.VITE_API_URL, import.meta.env.PROD)
+
+/** Con VITE_USE_MOCKS=true la app responde con los datos de src/mocks sin backend. */
+export const USE_MOCKS = parseFlag(import.meta.env.VITE_USE_MOCKS)
