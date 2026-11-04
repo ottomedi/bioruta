@@ -26,6 +26,28 @@ describe('cálculo de rutas de los mocks', () => {
     expect(orden.map((g) => g.id)).toEqual([1, 5, 4, 6])
   })
 
+  it('maternidad y ciclo cerrado comparten posición: decide la cercanía (R08)', () => {
+    const base = { latitud: 41.8, longitud: 0.3 }
+    const maternidadLejos = {
+      ...granja(1),
+      id: 201,
+      tipo: 'maternidad' as const,
+      coordenadas: { latitud: 42.2, longitud: 0.3 },
+    }
+    const cicloCerca = {
+      ...granja(1),
+      id: 202,
+      tipo: 'ciclo_cerrado' as const,
+      coordenadas: { latitud: 41.81, longitud: 0.3 },
+    }
+    const nucleo = { ...granja(1), id: 203, coordenadas: { latitud: 42.3, longitud: 0.3 } }
+
+    // El núcleo va primero aunque esté lejos; después, entre las dos de cerdas, la más cercana a él.
+    expect(ordenSegura(base, [cicloCerca, maternidadLejos, nucleo]).map((g) => g.id)).toEqual([
+      203, 201, 202,
+    ])
+  })
+
   it('marca como peligroso el tramo que llega a una granja con menos riesgo que una anterior', () => {
     const { mas_corta, segura } = calcularComparacion(BASE, [granja(6), granja(1)])
 

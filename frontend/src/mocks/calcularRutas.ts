@@ -25,11 +25,22 @@ const ORDEN_ESTADO: readonly Estado[] = [
   'positiva',
 ]
 
-/** De más a menos sensible: R04. */
-const ORDEN_TIPO = Object.keys(ETIQUETA_TIPO_GRANJA) as TipoGranja[]
+/** De más a menos sensible (R04). Maternidad y ciclo cerrado comparten posición. */
+const POSICION_TIPO: Readonly<Record<TipoGranja, number>> = {
+  nucleo_genetico: 0,
+  multiplicacion: 1,
+  maternidad: 2,
+  ciclo_cerrado: 2,
+  transicion: 3,
+  cebo: 4,
+}
+
+/** Cuántas posiciones de tipo hay: sirve para combinar estado y tipo en un solo nivel. */
+const POSICIONES_TIPO = Math.max(...Object.values(POSICION_TIPO)) + 1
 
 const posicionEstado = (g: Granja) => ORDEN_ESTADO.indexOf(g.estado_actual)
-const posicionTipo = (g: Granja) => ORDEN_TIPO.indexOf(g.tipo)
+/** Nivel de R08: primero el estado (R01) y, a igual estado, la sensibilidad (R04). */
+const nivel = (g: Granja) => posicionEstado(g) * POSICIONES_TIPO + POSICION_TIPO[g.tipo]
 
 /** Desde el origen, siempre a la granja pendiente más cercana. */
 export function ordenMasCorta(origen: Coordenadas, granjas: readonly Granja[]): Granja[] {
@@ -48,14 +59,26 @@ export function ordenMasCorta(origen: Coordenadas, granjas: readonly Granja[]): 
   return ordenadas
 }
 
-/** Primero las sanas y, a igual estado, las más sensibles; a igualdad, la más cercana a la base. */
+/**
+ * Prioridades de R08: primero las sanas (R01) y, a igual estado, las más
+ * sensibles (R04). Dentro de un mismo nivel, siempre a la más cercana a la
+ * parada anterior: no cambia el riesgo, solo ahorra kilómetros.
+ */
 export function ordenSegura(origen: Coordenadas, granjas: readonly Granja[]): Granja[] {
-  return [...granjas].sort(
-    (a, b) =>
-      posicionEstado(a) - posicionEstado(b) ||
-      posicionTipo(a) - posicionTipo(b) ||
-      distanciaKm(origen, a.coordenadas) - distanciaKm(origen, b.coordenadas),
-  )
+  const niveles = [...new Set(granjas.map(nivel))].sort((a, b) => a - b)
+  return niveles.reduce<{ ordenadas: Granja[]; punto: Coordenadas }>(
+    ({ ordenadas, punto }, n) => {
+      const tramo = ordenMasCorta(
+        punto,
+        granjas.filter((g) => nivel(g) === n),
+      )
+      return {
+        ordenadas: [...ordenadas, ...tramo],
+        punto: tramo.at(-1)?.coordenadas ?? punto,
+      }
+    },
+    { ordenadas: [], punto: origen },
+  ).ordenadas
 }
 
 function explicar(
