@@ -69,3 +69,108 @@ html {
   outline: 3px solid var(--color-campo);
   outline-offset: 2px;
 }
+
+/*
+ * Mapa (Leaflet). Los marcadores son HTML que Leaflet pinta fuera de React
+ * (components/mapa/iconos.ts); los tramos de la ruta son trazos SVG.
+ */
+.leaflet-container {
+  font-family: var(--font-sans);
+  background-color: var(--color-campo-suave);
+}
+
+/* OpenStreetMap es muy colorido: se apaga para que manden los colores de riesgo. */
+.mapa-teselas {
+  filter: saturate(0.35) brightness(1.04) contrast(0.92);
+}
+
+.marcador {
+  background: none;
+  border: none;
+}
+
+.marcador__forma {
+  width: 28px;
+  height: 28px;
+  filter: drop-shadow(0 1px 1.5px rgb(0 0 0 / 0.35));
+}
+
+.marcador__forma polygon,
+.marcador__forma circle {
+  stroke: white;
+  stroke-width: 1.5;
+}
+
+.marcador__trazo {
+  fill: none;
+  stroke: white;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.marcador--alto .marcador__forma {
+  fill: var(--color-riesgo-alto);
+}
+.marcador--medio .marcador__forma {
+  fill: var(--color-riesgo-medio-fuerte);
+}
+.marcador--medio .marcador__trazo {
+  stroke: var(--color-crotal-tinta);
+}
+.marcador--bajo .marcador__forma {
+  fill: var(--color-riesgo-bajo);
+}
+.marcador--sin_datos .marcador__forma {
+  fill: var(--color-riesgo-sin-datos);
+}
+
+.marcador--atenuado {
+  opacity: 0.45;
+}
+
+/* En la ruta: crotal con el número de parada y la forma del riesgo en la esquina. */
+.marcador--parada {
+  position: relative;
+}
+.marcador--parada .marcador__crotal {
+  position: absolute;
+  inset: 4px 6px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 5px;
+  border-radius: 45% 45% 6px 6px;
+  background-color: var(--color-crotal);
+  box-shadow:
+    inset 0 -2px 0 var(--color-crotal-oscuro),
+    0 1px 3px rgb(0 0 0 / 0.4);
+  color: var(--color-crotal-tinta);
+  font-family: var(--font-crotal);
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.marcador--parada .marcador__forma {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
+}
+
+.marcador--base svg {
+  width: 36px;
+  height: 36px;
+  padding: 6px;
+  border-radius: 9999px;
+  background-color: var(--color-campo);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.4);
+}
+
+.ruta-tramo {
+  stroke: var(--color-campo);
+}
+.ruta-tramo--peligroso {
+  stroke: var(--color-riesgo-alto);
+}

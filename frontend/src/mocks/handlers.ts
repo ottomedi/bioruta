@@ -1,6 +1,8 @@
 import { http, HttpResponse } from 'msw/http'
 import type {
   ApiError,
+  CalculoRutaRequest,
+  ComparacionRutas,
   Estado,
   EstadoSanitario,
   Granja,
@@ -17,6 +19,7 @@ import type {
 import { API_URL } from '../config'
 import { normalizar } from '../lib/texto'
 import { granjasGuardadas, guardarGranjas } from './almacen'
+import { calcularComparacion } from './calcularRutas'
 import { ESTADOS, TOKEN_DEMO, USUARIO_DEMO, VISITAS } from './fixtures'
 import { leerCsvGranjas } from './importarCsv'
 import { REGLAS } from './reglas'
@@ -55,6 +58,28 @@ function paginar<T>(lista: readonly T[], params: URLSearchParams) {
 
 function noExisteGranja(id: string) {
   return apiError(404, 'no_encontrado', `No existe la granja ${id}.`)
+}
+
+/** Lo mismo que el contrato: entre 1 y 20 granjas sin repetir. */
+const MAX_GRANJAS_RUTA = 20
+
+async function calcularRutas(request: Request) {
+  const body: unknown = await request.json().catch(() => null)
+  const { veterinario_id, granja_ids } = (body ?? {}) as Partial<CalculoRutaRequest>
+  if (veterinario_id !== USUARIO_DEMO.veterinario.id) {
+    return apiError(404, 'no_encontrado', `No existe el veterinario ${String(veterinario_id)}.`)
+  }
+  const ids = Array.isArray(granja_ids) ? granja_ids : []
+  if (ids.length < 1 || ids.length > MAX_GRANJAS_RUTA || new Set(ids).size !== ids.length) {
+    return apiError(422, 'validacion', `Elige entre 1 y ${MAX_GRANJAS_RUTA} granjas sin repetir.`)
+  }
+  const granjas = ids.map((id) => granjasGuardadas().find((g) => g.id === id))
+  const falta = ids.find((_, i) => !granjas[i])
+  if (falta !== undefined) return noExisteGranja(String(falta))
+  const elegidas = granjas.filter((g): g is Granja => g !== undefined)
+  return HttpResponse.json<ComparacionRutas>(
+    calcularComparacion(USUARIO_DEMO.veterinario.base, elegidas),
+  )
 }
 
 async function importarGranjas(request: Request) {
@@ -164,6 +189,11 @@ export const handlers = [
     const visitas = granjaId ? VISITAS.filter((v) => v.granja.id === Number(granjaId)) : VISITAS
     return HttpResponse.json(paginar(visitas, params))
   }),
+
+  http.post<never, never, ComparacionRutas | ApiError>(
+    `${API_URL}/rutas/calcular`,
+    ({ request }) => (tieneToken(request) ? calcularRutas(request) : noAutorizado()),
+  ),
 
   http.post<never, never, InformeImportacion | ApiError>(`${API_URL}/import`, ({ request }) =>
     tieneToken(request) ? importarGranjas(request) : noAutorizado(),

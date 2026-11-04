@@ -20,7 +20,10 @@ describe('rutas', () => {
   it('redirige la raíz a la ruta del día', async () => {
     const router = renderAt('/')
 
-    expect(await screen.findByRole('heading', { name: 'Ruta del día' })).toBeInTheDocument()
+    // La pantalla de la ruta carga Leaflet aparte: la primera vez tarda más.
+    expect(
+      await screen.findByRole('heading', { name: 'Ruta del día' }, { timeout: 5000 }),
+    ).toBeInTheDocument()
     expect(router.state.location.pathname).toBe('/ruta')
   })
 
@@ -46,7 +49,7 @@ describe('rutas', () => {
   })
 
   it('la navegación inferior lleva a cada sección y marca la activa', async () => {
-    renderAt('/ruta')
+    renderAt('/visitas')
     const inferior = await screen.findByRole('navigation', { name: 'Inferior' })
 
     await userEvent.click(within(inferior).getByRole('link', { name: 'Granjas' }))
