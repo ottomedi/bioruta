@@ -2,6 +2,7 @@ import { setupServer } from 'msw/node'
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest'
 import { fetchHealth } from '../api/health'
 import { API_URL } from '../config'
+import { reiniciarAlmacen } from './almacen'
 import { GRANJAS, TOKEN_DEMO } from './fixtures'
 import { filtrarGranjas, handlers } from './handlers'
 
@@ -9,7 +10,10 @@ const server = setupServer(...handlers)
 const AUTH = { Authorization: `Bearer ${TOKEN_DEMO}` }
 
 beforeAll(() => server.listen({ onUnhandledFrame: 'error' }))
-afterEach(() => server.resetHandlers())
+afterEach(() => {
+  server.resetHandlers()
+  reiniciarAlmacen()
+})
 afterAll(() => server.close())
 
 function get(path: string, headers: HeadersInit = AUTH) {
@@ -67,6 +71,66 @@ describe('handlers de MSW', () => {
   it('devuelven una granja por id y 404 si no existe', async () => {
     expect((await (await get('/granjas/1')).json()).nombre).toBe('Granja El Pinar')
     expect((await get('/granjas/999')).status).toBe(404)
+  })
+
+  it('devuelven el historial de una granja y sus visitas', async () => {
+    const estados = await (await get('/granjas/6/estados')).json()
+    const visitas = await (await get('/visitas?granja_id=1&limit=1')).json()
+
+    expect(estados.map((e: { estado: string }) => e.estado)).toEqual([
+      'sin_incidencias',
+      'sospechosa',
+      'positiva',
+    ])
+    expect(visitas).toMatchObject({ total: 2, limit: 1 })
+    expect(visitas.items[0].granja.id).toBe(1)
+    expect((await get('/granjas/999/estados')).status).toBe(404)
+  })
+
+  it('devuelven las zonas sin repetir', async () => {
+    expect(await (await get('/zonas')).json()).toEqual(['La Litera'])
+  })
+
+  it('importan un CSV de granjas y las añaden a la lista', async () => {
+    const csv = [
+      'codigo_rega,nombre,tipo,latitud,longitud,municipio,provincia,zona',
+      'ES9,Granja Nueva,cebo,41.7,0.6,Almacelles,Lleida,Segrià',
+      'ES220000000001,El Pinar renombrada,nucleo_genetico,41.87,0.31,Binéfar,Huesca,La Litera',
+      ',Mala,,1,1,X,Y,',
+    ].join('\n')
+    const formulario = new FormData()
+    formulario.set('fichero', new File([csv], 'granjas.csv', { type: 'text/csv' }))
+    formulario.set('entidad', 'granjas')
+
+    const response = await fetch(`${API_URL}/import`, {
+      method: 'POST',
+      headers: AUTH,
+      body: formulario,
+    })
+
+    expect(await response.json()).toMatchObject({
+      filas_totales: 3,
+      creadas: 1,
+      actualizadas: 1,
+      errores: [{ fila: 3, campo: 'tipo' }],
+    })
+    const lista = await (await get('/granjas')).json()
+    expect(lista.total).toBe(GRANJAS.length + 1)
+    expect(await (await get('/zonas')).json()).toEqual(['La Litera', 'Segrià'])
+  })
+
+  it('rechazan importar otra cosa que granjas en CSV', async () => {
+    const formulario = new FormData()
+    formulario.set('fichero', new File(['[]'], 'visitas.json'))
+    formulario.set('entidad', 'visitas')
+
+    const response = await fetch(`${API_URL}/import`, {
+      method: 'POST',
+      headers: AUTH,
+      body: formulario,
+    })
+
+    expect(response.status).toBe(422)
   })
 
   it('devuelven la hoja de reglas', async () => {

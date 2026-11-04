@@ -1,9 +1,6 @@
 import type { ApiRequest } from './client'
 import type { LoginRequest, Usuario } from './types'
-
-function esObjeto(data: unknown): data is Record<string, unknown> {
-  return typeof data === 'object' && data !== null
-}
+import { esObjeto } from './validar'
 
 /** Devuelve el token de una respuesta de /auth/login o /auth/demo. */
 export function parseToken(data: unknown): string {

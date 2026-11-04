@@ -33,7 +33,8 @@ describe('rutas', () => {
 
   it.each([
     ['/granjas', 'Granjas'],
-    ['/granjas/7', 'Granja 7'],
+    ['/granjas/6', 'Cebo Los Almendros'],
+    ['/granjas/importar', 'Importar fichero'],
     ['/visitas', 'Visitas'],
     ['/trazabilidad', 'Trazabilidad'],
     ['/fuentes', 'De dónde salen las reglas'],

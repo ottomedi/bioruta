@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "BioRuta API",
-    "version": "1.0.0",
-    "description": "Contrato v1, cerrado con Otto el 30 de octubre de 2026. Sale de docs/modelo-dominio.md y sirve\npara generar los tipos del frontend (openapi-typescript) y los mocks de MSW\nhasta que el backend real publique su propio OpenAPI.\n\nConvenciones:\n- Las fechas y horas van en ISO 8601 con zona y se guardan en UTC. El\n  frontend las enseña en hora de Madrid.\n- Una respuesta correcta devuelve el recurso tal cual; el código HTTP indica\n  si fue bien. Todos los errores usan el esquema Error, así el frontend tiene\n  un único sitio donde leerlos.\n- Las listas paginadas devuelven items, total, page y limit.\n- Todo pide token Bearer salvo /health, /auth/login y /auth/demo.\n- Los valores numéricos del motor no viajan aquí como datos editables:\n  salen de risk_config.json y se consultan con GET /reglas.\n"
+    "version": "1.1.0",
+    "description": "Contrato v1, cerrado con Otto el 30 de octubre de 2026. Sale de docs/modelo-dominio.md y sirve\npara generar los tipos del frontend (openapi-typescript) y los mocks de MSW\nhasta que el backend real publique su propio OpenAPI.\n\nCambios: 1.1.0 (4 de noviembre de 2026) añade GET /zonas para el filtro de\nzona de la lista de granjas.\n\nConvenciones:\n- Las fechas y horas van en ISO 8601 con zona y se guardan en UTC. El\n  frontend las enseña en hora de Madrid.\n- Una respuesta correcta devuelve el recurso tal cual; el código HTTP indica\n  si fue bien. Todos los errores usan el esquema Error, así el frontend tiene\n  un único sitio donde leerlos.\n- Las listas paginadas devuelven items, total, page y limit.\n- Todo pide token Bearer salvo /health, /auth/login y /auth/demo.\n- Los valores numéricos del motor no viajan aquí como datos editables:\n  salen de risk_config.json y se consultan con GET /reglas.\n"
   },
   "servers": [
     {
@@ -392,6 +392,34 @@
           },
           "404": {
             "$ref": "#/components/responses/NoEncontrado"
+          }
+        }
+      }
+    },
+    "/zonas": {
+      "get": {
+        "tags": [
+          "granjas"
+        ],
+        "summary": "Listar las zonas de las granjas",
+        "description": "Valores distintos del campo zona de las granjas, ordenados alfabéticamente\ny sin nulos. Es para el desplegable del filtro de zona en la lista de granjas.\n",
+        "operationId": "listZonas",
+        "responses": {
+          "200": {
+            "description": "Zonas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/NoAutorizado"
           }
         }
       }

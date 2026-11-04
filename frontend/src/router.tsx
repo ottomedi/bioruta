@@ -1,7 +1,9 @@
 import { Navigate, type RouteObject } from 'react-router'
 import { RequireAuth } from './auth/RequireAuth'
 import { AppLayout } from './layout/AppLayout'
-import { GranjaDetallePage } from './pages/GranjaDetallePage'
+import { GranjaDetallePage } from './pages/granjas/GranjaDetallePage'
+import { GranjasPage } from './pages/granjas/GranjasPage'
+import { ImportarPage } from './pages/granjas/ImportarPage'
 import { LoginPage } from './pages/LoginPage'
 import { PlaceholderPage } from './pages/PlaceholderPage'
 
@@ -25,12 +27,8 @@ export const routes: RouteObject[] = [
               />
             ),
           },
-          {
-            path: 'granjas',
-            element: (
-              <PlaceholderPage title="Granjas" description="Lista con filtros y nivel de riesgo." />
-            ),
-          },
+          { path: 'granjas', element: <GranjasPage /> },
+          { path: 'granjas/importar', element: <ImportarPage /> },
           { path: 'granjas/:id', element: <GranjaDetallePage /> },
           {
             path: 'visitas',

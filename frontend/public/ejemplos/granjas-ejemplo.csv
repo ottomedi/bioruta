@@ -1,0 +1,6 @@
+codigo_rega,nombre,tipo,latitud,longitud,municipio,provincia,zona
+ES220000000101,Granja Vallcalent,maternidad,41.8455,0.3011,Binéfar,Huesca,La Litera
+ES220000000102,Cebo Sant Quilez,cebo,41.8790,0.2680,San Esteban de Litera,Huesca,La Litera
+ES250000000103,Porcino La Noguera,ciclo_cerrado,41.7302,0.6102,Almacelles,Lleida,Segrià
+,Granja sin tipo,,41.8001,0.3100,Esplús,Huesca,La Litera
+ES220000000105,Granja Coordenada Mala,transicion,141.9,0.2,Tamarite de Litera,Huesca,La Litera

@@ -53,7 +53,9 @@ export function createApiClient({
     const token = getToken()
     const headers = new Headers(init.headers)
     if (token) headers.set('Authorization', `Bearer ${token}`)
-    if (init.body !== undefined && !headers.has('Content-Type')) {
+    // Con FormData el navegador pone el Content-Type multipart con su boundary.
+    const esFormulario = init.body instanceof FormData
+    if (init.body !== undefined && !esFormulario && !headers.has('Content-Type')) {
       headers.set('Content-Type', 'application/json')
     }
 
