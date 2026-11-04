@@ -50,6 +50,15 @@ describe('cliente de la API', () => {
     expect(new Headers(init.headers).get('Content-Type')).toBe('application/json')
   })
 
+  it('con FormData deja que el navegador ponga el Content-Type', async () => {
+    const fetchMock = stubFetch(Response.json({}))
+
+    await client().request('/import', { method: 'POST', body: new FormData() })
+
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit]
+    expect(new Headers(init.headers).has('Content-Type')).toBe(false)
+  })
+
   it('convierte un error del contrato en ApiRequestError con su mensaje', async () => {
     stubFetch(Response.json({ codigo: 'no_encontrado', mensaje: 'No existe.' }, { status: 404 }))
 
