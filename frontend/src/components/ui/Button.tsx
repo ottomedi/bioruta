@@ -1,7 +1,8 @@
 import type { ButtonHTMLAttributes } from 'react'
 import { Spinner } from './Spinner'
 
-type Variante = 'primario' | 'secundario' | 'peligro' | 'fantasma'
+/** «crotal» es la acción principal sobre fondo verde campo, como «Entrar como demo». */
+type Variante = 'primario' | 'crotal' | 'secundario' | 'peligro' | 'fantasma'
 type Tamano = 'normal' | 'grande'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -14,6 +15,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const CLASES_VARIANTE: Readonly<Record<Variante, string>> = {
   primario: 'bg-campo text-white shadow-tarjeta hover:bg-campo-claro',
+  crotal: 'bg-crotal font-bold text-crotal-tinta shadow-aviso hover:bg-crotal-oscuro',
   secundario:
     'border border-linea bg-superficie text-tinta hover:border-campo hover:bg-campo-suave',
   peligro: 'bg-riesgo-alto text-white shadow-tarjeta hover:brightness-90',

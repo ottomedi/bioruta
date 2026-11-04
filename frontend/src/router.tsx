@@ -1,4 +1,5 @@
 import { Navigate, type RouteObject } from 'react-router'
+import { RequireAuth } from './auth/RequireAuth'
 import { AppLayout } from './layout/AppLayout'
 import { GranjaDetallePage } from './pages/GranjaDetallePage'
 import { LoginPage } from './pages/LoginPage'
@@ -8,59 +9,70 @@ import { PlaceholderPage } from './pages/PlaceholderPage'
 export const routes: RouteObject[] = [
   { path: '/login', element: <LoginPage /> },
   {
-    element: <AppLayout />,
+    // Todo lo demás pide sesión: sin ella, RequireAuth manda al login.
+    element: <RequireAuth />,
     children: [
-      { index: true, element: <Navigate to="/ruta" replace /> },
       {
-        path: 'ruta',
-        element: (
-          <PlaceholderPage
-            title="Ruta del día"
-            description="Elegir granjas, calcular la ruta y verla en el mapa."
-          />
-        ),
-      },
-      {
-        path: 'granjas',
-        element: (
-          <PlaceholderPage title="Granjas" description="Lista con filtros y nivel de riesgo." />
-        ),
-      },
-      { path: 'granjas/:id', element: <GranjaDetallePage /> },
-      {
-        path: 'visitas',
-        element: <PlaceholderPage title="Visitas" description="Registro de entradas y salidas." />,
-      },
-      {
-        path: 'trazabilidad',
-        element: (
-          <PlaceholderPage
-            title="Trazabilidad"
-            description="Quién pasó por una granja positiva y a qué granjas fue después."
-          />
-        ),
-      },
-      {
-        path: 'fuentes',
-        element: (
-          <PlaceholderPage
-            title="De dónde salen las reglas"
-            description="Cada regla del motor con su fuente pública o marcada como supuesto."
-          />
-        ),
-      },
-      {
-        // Catálogo interno: se carga aparte para no engordar el bundle principal.
-        path: 'dev/componentes',
-        lazy: async () => ({
-          Component: (await import('./pages/ComponentesPage')).ComponentesPage,
-        }),
-      },
-      {
-        path: '*',
-        element: (
-          <PlaceholderPage title="Página no encontrada" description="Esta dirección no existe." />
-        ),
+        element: <AppLayout />,
+        children: [
+          { index: true, element: <Navigate to="/ruta" replace /> },
+          {
+            path: 'ruta',
+            element: (
+              <PlaceholderPage
+                title="Ruta del día"
+                description="Elegir granjas, calcular la ruta y verla en el mapa."
+              />
+            ),
+          },
+          {
+            path: 'granjas',
+            element: (
+              <PlaceholderPage title="Granjas" description="Lista con filtros y nivel de riesgo." />
+            ),
+          },
+          { path: 'granjas/:id', element: <GranjaDetallePage /> },
+          {
+            path: 'visitas',
+            element: (
+              <PlaceholderPage title="Visitas" description="Registro de entradas y salidas." />
+            ),
+          },
+          {
+            path: 'trazabilidad',
+            element: (
+              <PlaceholderPage
+                title="Trazabilidad"
+                description="Quién pasó por una granja positiva y a qué granjas fue después."
+              />
+            ),
+          },
+          {
+            path: 'fuentes',
+            element: (
+              <PlaceholderPage
+                title="De dónde salen las reglas"
+                description="Cada regla del motor con su fuente pública o marcada como supuesto."
+              />
+            ),
+          },
+          {
+            // Catálogo interno: se carga aparte para no engordar el bundle principal.
+            path: 'dev/componentes',
+            lazy: async () => ({
+              Component: (await import('./pages/ComponentesPage')).ComponentesPage,
+            }),
+          },
+          {
+            path: '*',
+            element: (
+              <PlaceholderPage
+                title="Página no encontrada"
+                description="Esta dirección no existe."
+              />
+            ),
+          },
+        ],
       },
     ],
   },

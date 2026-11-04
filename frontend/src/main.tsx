@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
+import { AuthProvider } from './auth/AuthProvider'
 import { ToastProvider } from './components/ui/ToastProvider'
 import { USE_MOCKS } from './config'
 // Solo latín: el resto de subconjuntos no hace falta y engordaría la caché sin red.
@@ -40,7 +41,9 @@ if (USE_MOCKS) {
 createRoot(rootElement).render(
   <StrictMode>
     <ToastProvider>
-      <RouterProvider router={createBrowserRouter(routes)} />
+      <AuthProvider>
+        <RouterProvider router={createBrowserRouter(routes)} />
+      </AuthProvider>
     </ToastProvider>
   </StrictMode>,
 )
