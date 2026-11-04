@@ -86,7 +86,8 @@ describe('lista de granjas', () => {
     const router = renderApp('/granjas?page=9')
 
     await waitFor(() => expect(router.state.location.search).toBe(''))
-    expect(await filas()).toHaveLength(GRANJAS.length)
+    // Mientras carga la página buena se sigue viendo la vacía: hay que esperar a la nueva.
+    await waitFor(async () => expect(await filas()).toHaveLength(GRANJAS.length))
   })
 
   it('carga las zonas en el desplegable', async () => {
