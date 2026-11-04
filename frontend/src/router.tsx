@@ -20,12 +20,8 @@ export const routes: RouteObject[] = [
           { index: true, element: <Navigate to="/ruta" replace /> },
           {
             path: 'ruta',
-            element: (
-              <PlaceholderPage
-                title="Ruta del día"
-                description="Elegir granjas, calcular la ruta y verla en el mapa."
-              />
-            ),
+            // El mapa (Leaflet) va en un chunk aparte: solo se descarga al abrir esta pantalla.
+            lazy: async () => ({ Component: (await import('./pages/ruta/RutaPage')).RutaPage }),
           },
           { path: 'granjas', element: <GranjasPage /> },
           { path: 'granjas/importar', element: <ImportarPage /> },
