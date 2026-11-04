@@ -38,7 +38,10 @@ export function ListaParadas({ ruta }: { readonly ruta: RutaCalculada }) {
               {parada.regla_id && (
                 <>
                   {' '}
-                  <Link to="/fuentes" className="font-medium text-campo underline">
+                  <Link
+                    to={`/fuentes#${encodeURIComponent(parada.regla_id)}`}
+                    className="font-medium text-campo underline"
+                  >
                     Ver {parada.regla_id}
                   </Link>
                 </>

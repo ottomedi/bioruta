@@ -20,8 +20,9 @@ import { API_URL } from '../config'
 import { normalizar } from '../lib/texto'
 import { granjasGuardadas, guardarGranjas } from './almacen'
 import { calcularComparacion } from './calcularRutas'
-import { ESTADOS, REGLAS, TOKEN_DEMO, USUARIO_DEMO, VISITAS } from './fixtures'
+import { ESTADOS, TOKEN_DEMO, USUARIO_DEMO, VISITAS } from './fixtures'
 import { leerCsvGranjas } from './importarCsv'
+import { REGLAS } from './reglas'
 
 const DEFAULT_PAGE = 1
 const DEFAULT_LIMIT = 25

@@ -46,6 +46,11 @@ describe('ruta del día', () => {
       .filter((t) => t && !t.startsWith('Ver'))
     expect(nombres).toEqual(['Granja El Pinar', 'Cebo Los Almendros'])
     expect(screen.getByRole('radio', { name: /Segura/ })).toBeChecked()
+    // Cada parada enlaza a la regla que decidió su posición.
+    expect(within(paradas).getAllByRole('link', { name: 'Ver R01' })[0]).toHaveAttribute(
+      'href',
+      '/fuentes#R01',
+    )
   })
 
   it('cambia a la ruta más corta con el selector', async () => {

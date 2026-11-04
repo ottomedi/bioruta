@@ -1,4 +1,4 @@
-import type { EntidadImportacion, Enfermedad, Medida, OrigenEstado } from '../api/types'
+import type { EntidadImportacion, Enfermedad, Medida, OrigenEstado, TipoRegla } from '../api/types'
 
 /** Textos de los enums del contrato que no tienen que ver con el riesgo (esos están en riesgo.ts). */
 
@@ -24,4 +24,11 @@ export const ETIQUETA_ENTIDAD: Readonly<Record<EntidadImportacion, string>> = {
   granjas: 'Granjas',
   visitas: 'Visitas',
   estados: 'Estados sanitarios',
+}
+
+/** De más a menos respaldo. */
+export const ETIQUETA_TIPO_REGLA: Readonly<Record<TipoRegla, string>> = {
+  normativa: 'Normativa',
+  guia: 'Guía',
+  supuesto: 'Supuesto',
 }
