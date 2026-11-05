@@ -34,12 +34,12 @@ Es el centro de todo: el motor ordena granjas, las visitas se hacen en granjas y
 | `id` | entero | Clave interna. No usamos el código REGA como clave porque en los datos del evento puede faltar o venir con otro formato, y no queremos que eso rompa las relaciones. |
 | `codigo_rega` | texto, único, opcional | Es el identificador oficial de las explotaciones ganaderas en España. Si los datos del evento lo traen, el adaptador lo usa para no duplicar granjas al importar dos veces. Es opcional porque los datos simulados no lo necesitan. |
 | `nombre` | texto | Lo que lee el veterinario en la lista y en el mapa. Un código no se entiende en una demo. |
-| `tipo` | enum `TipoGranja` | Define la sensibilidad de la granja (cuánto se pierde si se contagia), que es la mitad de la función de coste. El valor de sensibilidad de cada tipo está en `risk_config.json`, no aquí. |
+| `tipo` | enum `TipoGranja` | Define la sensibilidad de la granja (cuánto se pierde si se contagia), que es uno de los criterios del orden de visita (R04). La posición de cada tipo está en `risk_config.json`, no aquí. |
 | `latitud`, `longitud` | decimales (WGS84) | Las necesitan el cálculo de distancias (Haversine) y el mapa. WGS84 porque es lo que usan Leaflet y OSRM y lo que suelen traer los datos abiertos. |
 | `municipio`, `provincia` | texto | Para filtrar la lista y para que el jurado sitúe las granjas sin abrir el mapa. |
 | `zona` | texto, opcional | Agrupación de granjas (comarca, integradora o «comunidad» de granjas muy conectadas). El plan pide filtrar por zona y la referencia de Machado Lab usa el paso entre comunidades como factor de riesgo. De momento solo sirve para filtrar; si una regla lo usa, tendrá su fila en la hoja. |
 
-`TipoGranja` tiene estos valores, ordenados de más a menos sensible según la propuesta: `nucleo_genetico`, `multiplicacion`, `maternidad`, `ciclo_cerrado`, `transicion`, `cebo`. El orden y los valores numéricos están pendientes de fuente (fila «Sensibilidad por tipo de granja» de la hoja). Es un enum y no texto libre porque el motor necesita un valor de sensibilidad para cada tipo; si llegan datos con un tipo nuevo, se añade al enum y a `risk_config.json` a la vez, y si alguien se olvida de lo segundo, falla un test en vez de calcular mal en silencio.
+`TipoGranja` tiene estos valores, ordenados de más a menos sensible según la propuesta: `nucleo_genetico`, `multiplicacion`, `maternidad`, `ciclo_cerrado`, `transicion`, `cebo`. El orden tiene fuente desde la versión 2 de la hoja (R04) y va como posiciones, no como números; maternidad y ciclo cerrado comparten posición. Es un enum y no texto libre porque el motor necesita una posición para cada tipo; si llegan datos con un tipo nuevo, se añade al enum y a `risk_config.json` a la vez, y si alguien se olvida de lo segundo, falla un test en vez de calcular mal en silencio.
 
 Lo que no he puesto, y por qué:
 
@@ -184,15 +184,15 @@ No va en la base de datos porque solo cambia con un cambio de código revisado e
 
 Parámetros del modelo que tienen que estar en la hoja (y no en las tablas):
 
-- Sensibilidad de cada `TipoGranja`.
-- Riesgo que emite cada `Estado`.
-- Horas de vacío tras una granja positiva o sospechosa, y si dependen de la enfermedad.
-- Cuánto reduce el riesgo cada `Medida`.
-- Cómo baja el riesgo con el tiempo desde la salida.
-- Umbral de riesgo para entrar en una granja de sensibilidad alta (regla dura).
-- Pesos α y β de la función de coste.
-- Ventana de trazabilidad: cuántos días hacia atrás desde el positivo y cuántos hacia delante para las visitas posteriores.
-- Cómo se combina el estado cuando una granja tiene varios vigentes (por ahora, el de mayor riesgo).
+- Posición de cada `TipoGranja` (R04).
+- Orden de riesgo de cada `Estado` (R05).
+- Horas de vacío tras una granja positiva o sospechosa, por enfermedad (R02).
+- Qué medidas son obligatorias al salir y qué pasa si falta alguna (R03).
+- Cómo baja el riesgo con el tiempo desde la salida: en escalón, ligado a R02 (R06).
+- Horas mínimas para entrar en una granja según su tipo (regla dura, R07).
+- Orden de prioridades con el que el motor combina las reglas, sin pesos (R08).
+- Ventana de trazabilidad: cuántos días hacia atrás desde el positivo, por enfermedad, y hacia delante hasta hoy (R09).
+- Cómo se combina el estado cuando una granja tiene varios vigentes: el de mayor riesgo (R10).
 
 ### Trazabilidad
 

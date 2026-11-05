@@ -38,15 +38,27 @@ describe('de dónde salen las reglas', () => {
     )
   })
 
-  it('dice cuándo una regla no tiene fuente y cuándo la tiene solo en parte', async () => {
+  it('dice cuándo una regla tiene fuente solo en parte', async () => {
     renderApp('/fuentes')
     await screen.findAllByRole('article')
 
-    expect(
-      within(ficha('R08')).getByText(/Sin fuente: es una decisión nuestra/),
-    ).toBeInTheDocument()
-    expect(within(ficha('R08')).queryByRole('link')).not.toBeInTheDocument()
-    expect(within(ficha('R03')).getByText('con fuente en parte')).toBeInTheDocument()
+    expect(within(ficha('R10')).getByText('con fuente en parte')).toBeInTheDocument()
+    expect(within(ficha('R08')).queryByText('con fuente en parte')).not.toBeInTheDocument()
+  })
+
+  it('dice cuándo una regla no tiene fuente y no pinta enlace', async () => {
+    server.use(
+      http.get(`${API_URL}/reglas`, () =>
+        HttpResponse.json([
+          { ...REGLAS[0], tipo: 'supuesto', fuente: null, url: null, cita: null },
+        ]),
+      ),
+    )
+    renderApp('/fuentes')
+
+    const regla = await screen.findByRole('article')
+    expect(within(regla).getByText(/Sin fuente: es una decisión nuestra/)).toBeInTheDocument()
+    expect(within(regla).queryByRole('link')).not.toBeInTheDocument()
   })
 
   it('cuenta cuántas reglas hay de cada tipo', async () => {
@@ -54,8 +66,15 @@ describe('de dónde salen las reglas', () => {
     await screen.findAllByRole('article')
 
     const resumen = screen.getByRole('region', { name: 'Qué significa cada tipo' })
-    const supuestos = REGLAS.filter((r) => r.tipo === 'supuesto').length
-    expect(within(resumen).getByText(String(supuestos))).toBeInTheDocument()
+    for (const [tipo, etiqueta] of [
+      ['normativa', 'Normativa'],
+      ['guia', 'Guía'],
+      ['supuesto', 'Supuesto'],
+    ] as const) {
+      const tarjeta = within(resumen).getByText(etiqueta).closest('div') as HTMLElement
+      const total = REGLAS.filter((r) => r.tipo === tipo).length
+      expect(within(tarjeta).getByText(String(total))).toBeInTheDocument()
+    }
     const parciales = REGLAS.filter((r) => r.tipo === 'supuesto' && r.fuente).length
     expect(
       within(resumen).getByText(`${parciales} de ellas tienen fuente en una parte.`),
