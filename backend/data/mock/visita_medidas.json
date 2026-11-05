@@ -1,0 +1,450 @@
+[
+  {
+    "visita_id": 1,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 3,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 3,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 3,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 4,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 5,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 5,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 6,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 6,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 6,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 7,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 7,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 8,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 8,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 10,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 10,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 10,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 11,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 11,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 12,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 12,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 12,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 13,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 14,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 15,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 15,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 16,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 16,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 16,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 17,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 17,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 17,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 18,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 18,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 18,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 19,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 19,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 19,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 20,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 20,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 21,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 21,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 23,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 23,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 26,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 28,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 28,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 28,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 29,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 29,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 30,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 30,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 31,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 31,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 33,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 33,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 33,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 34,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 34,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 35,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 35,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 35,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 36,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 37,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 37,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 38,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 38,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 39,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 39,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 40,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 40,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 40,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 41,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 41,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 42,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 42,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 42,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 43,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 43,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 43,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 44,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 45,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 46,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 49,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 49,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 49,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 50,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 50,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 50,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 51,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 51,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 51,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 52,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 52,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 53,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 53,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 53,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 54,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 54,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 55,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 55,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 56,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 56,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 57,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 57,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 57,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 58,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 60,
+    "medida": "ducha"
+  },
+  {
+    "visita_id": 60,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 60,
+    "medida": "desinfeccion_calzado"
+  },
+  {
+    "visita_id": 61,
+    "medida": "cambio_ropa"
+  },
+  {
+    "visita_id": 61,
+    "medida": "desinfeccion_calzado"
+  }
+]

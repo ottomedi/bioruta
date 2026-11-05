@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "nombre": "Laura Gil",
+    "base_latitud": 41.8517,
+    "base_longitud": 0.2946
+  },
+  {
+    "id": 2,
+    "nombre": "Marcos Ibáñez",
+    "base_latitud": 41.8601,
+    "base_longitud": 0.2262
+  }
+]
