@@ -3,12 +3,14 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
 from .errors import registrar_errores
+from .routers import auth
 from .schemas import Health
 
 VERSION = "0.1.0"
 
 app = FastAPI(title="BioRuta API", version=VERSION)
 registrar_errores(app)
+app.include_router(auth.router)
 
 app.add_middleware(
     CORSMiddleware,
