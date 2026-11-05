@@ -1,0 +1,551 @@
+[
+  {
+    "id": 1,
+    "veterinario_id": 1,
+    "granja_id": 2,
+    "entrada": "2026-10-22T09:00:00Z",
+    "salida": "2026-10-22T10:05:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 2,
+    "veterinario_id": 1,
+    "granja_id": 6,
+    "entrada": "2026-10-24T12:00:00Z",
+    "salida": "2026-10-24T13:30:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 3,
+    "veterinario_id": 1,
+    "granja_id": 1,
+    "entrada": "2026-10-26T08:00:00Z",
+    "salida": "2026-10-26T09:10:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 4,
+    "veterinario_id": 1,
+    "granja_id": 3,
+    "entrada": "2026-10-30T08:30:00Z",
+    "salida": "2026-10-30T09:15:00Z",
+    "estado_granja_en_visita": "zona_vigilancia",
+    "parada_id": null
+  },
+  {
+    "id": 5,
+    "veterinario_id": 1,
+    "granja_id": 4,
+    "entrada": "2026-10-31T10:00:00Z",
+    "salida": "2026-10-31T11:20:00Z",
+    "estado_granja_en_visita": "sospechosa",
+    "parada_id": null
+  },
+  {
+    "id": 6,
+    "veterinario_id": 1,
+    "granja_id": 1,
+    "entrada": "2026-11-02T08:15:00Z",
+    "salida": "2026-11-02T09:40:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 7,
+    "veterinario_id": 1,
+    "granja_id": 20,
+    "entrada": "2026-10-03T08:30:00Z",
+    "salida": "2026-10-03T09:40:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 8,
+    "veterinario_id": 2,
+    "granja_id": 15,
+    "entrada": "2026-10-03T08:30:00Z",
+    "salida": "2026-10-03T09:41:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 9,
+    "veterinario_id": 1,
+    "granja_id": 3,
+    "entrada": "2026-10-03T11:30:00Z",
+    "salida": "2026-10-03T13:03:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 10,
+    "veterinario_id": 2,
+    "granja_id": 24,
+    "entrada": "2026-10-03T11:30:00Z",
+    "salida": "2026-10-03T12:56:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 11,
+    "veterinario_id": 1,
+    "granja_id": 23,
+    "entrada": "2026-10-04T08:30:00Z",
+    "salida": "2026-10-04T09:42:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 12,
+    "veterinario_id": 1,
+    "granja_id": 18,
+    "entrada": "2026-10-05T08:30:00Z",
+    "salida": "2026-10-05T09:31:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 13,
+    "veterinario_id": 1,
+    "granja_id": 23,
+    "entrada": "2026-10-05T11:30:00Z",
+    "salida": "2026-10-05T12:36:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 14,
+    "veterinario_id": 1,
+    "granja_id": 25,
+    "entrada": "2026-10-06T08:30:00Z",
+    "salida": "2026-10-06T10:01:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 15,
+    "veterinario_id": 2,
+    "granja_id": 8,
+    "entrada": "2026-10-06T08:30:00Z",
+    "salida": "2026-10-06T09:49:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 16,
+    "veterinario_id": 2,
+    "granja_id": 3,
+    "entrada": "2026-10-07T08:30:00Z",
+    "salida": "2026-10-07T09:43:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 17,
+    "veterinario_id": 1,
+    "granja_id": 22,
+    "entrada": "2026-10-08T08:30:00Z",
+    "salida": "2026-10-08T09:34:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 18,
+    "veterinario_id": 2,
+    "granja_id": 3,
+    "entrada": "2026-10-08T08:30:00Z",
+    "salida": "2026-10-08T10:03:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 19,
+    "veterinario_id": 1,
+    "granja_id": 19,
+    "entrada": "2026-10-09T08:30:00Z",
+    "salida": "2026-10-09T10:04:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 20,
+    "veterinario_id": 2,
+    "granja_id": 2,
+    "entrada": "2026-10-09T08:30:00Z",
+    "salida": "2026-10-09T09:25:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 21,
+    "veterinario_id": 2,
+    "granja_id": 17,
+    "entrada": "2026-10-09T11:30:00Z",
+    "salida": "2026-10-09T12:33:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 22,
+    "veterinario_id": 1,
+    "granja_id": 11,
+    "entrada": "2026-10-10T08:30:00Z",
+    "salida": "2026-10-10T09:30:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 23,
+    "veterinario_id": 2,
+    "granja_id": 8,
+    "entrada": "2026-10-10T08:30:00Z",
+    "salida": "2026-10-10T09:18:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 24,
+    "veterinario_id": 1,
+    "granja_id": 21,
+    "entrada": "2026-10-10T11:30:00Z",
+    "salida": "2026-10-10T12:20:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 25,
+    "veterinario_id": 2,
+    "granja_id": 13,
+    "entrada": "2026-10-10T11:30:00Z",
+    "salida": "2026-10-10T12:18:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 26,
+    "veterinario_id": 1,
+    "granja_id": 19,
+    "entrada": "2026-10-11T08:30:00Z",
+    "salida": "2026-10-11T10:04:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 27,
+    "veterinario_id": 2,
+    "granja_id": 2,
+    "entrada": "2026-10-11T08:30:00Z",
+    "salida": "2026-10-11T09:47:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 28,
+    "veterinario_id": 1,
+    "granja_id": 10,
+    "entrada": "2026-10-12T08:30:00Z",
+    "salida": "2026-10-12T09:48:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 29,
+    "veterinario_id": 2,
+    "granja_id": 23,
+    "entrada": "2026-10-12T08:30:00Z",
+    "salida": "2026-10-12T09:30:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 30,
+    "veterinario_id": 2,
+    "granja_id": 21,
+    "entrada": "2026-10-13T08:30:00Z",
+    "salida": "2026-10-13T09:20:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 31,
+    "veterinario_id": 1,
+    "granja_id": 16,
+    "entrada": "2026-10-14T08:30:00Z",
+    "salida": "2026-10-14T09:48:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 32,
+    "veterinario_id": 1,
+    "granja_id": 3,
+    "entrada": "2026-10-14T11:30:00Z",
+    "salida": "2026-10-14T12:36:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 33,
+    "veterinario_id": 1,
+    "granja_id": 1,
+    "entrada": "2026-10-15T08:30:00Z",
+    "salida": "2026-10-15T09:19:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 34,
+    "veterinario_id": 2,
+    "granja_id": 9,
+    "entrada": "2026-10-15T08:30:00Z",
+    "salida": "2026-10-15T09:31:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 35,
+    "veterinario_id": 2,
+    "granja_id": 17,
+    "entrada": "2026-10-15T11:30:00Z",
+    "salida": "2026-10-15T12:35:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 36,
+    "veterinario_id": 2,
+    "granja_id": 3,
+    "entrada": "2026-10-16T08:30:00Z",
+    "salida": "2026-10-16T09:49:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 37,
+    "veterinario_id": 2,
+    "granja_id": 3,
+    "entrada": "2026-10-17T08:30:00Z",
+    "salida": "2026-10-17T09:30:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 38,
+    "veterinario_id": 2,
+    "granja_id": 20,
+    "entrada": "2026-10-17T11:30:00Z",
+    "salida": "2026-10-17T13:00:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 39,
+    "veterinario_id": 1,
+    "granja_id": 10,
+    "entrada": "2026-10-18T08:30:00Z",
+    "salida": "2026-10-18T09:57:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 40,
+    "veterinario_id": 2,
+    "granja_id": 23,
+    "entrada": "2026-10-18T08:30:00Z",
+    "salida": "2026-10-18T09:21:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 41,
+    "veterinario_id": 2,
+    "granja_id": 4,
+    "entrada": "2026-10-18T11:30:00Z",
+    "salida": "2026-10-18T13:02:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 42,
+    "veterinario_id": 2,
+    "granja_id": 8,
+    "entrada": "2026-10-19T08:30:00Z",
+    "salida": "2026-10-19T09:58:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 43,
+    "veterinario_id": 2,
+    "granja_id": 2,
+    "entrada": "2026-10-19T11:30:00Z",
+    "salida": "2026-10-19T12:20:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 44,
+    "veterinario_id": 2,
+    "granja_id": 22,
+    "entrada": "2026-10-20T08:30:00Z",
+    "salida": "2026-10-20T09:31:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 45,
+    "veterinario_id": 1,
+    "granja_id": 17,
+    "entrada": "2026-10-21T08:30:00Z",
+    "salida": "2026-10-21T09:41:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 46,
+    "veterinario_id": 2,
+    "granja_id": 19,
+    "entrada": "2026-10-21T08:30:00Z",
+    "salida": "2026-10-21T09:15:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 47,
+    "veterinario_id": 2,
+    "granja_id": 5,
+    "entrada": "2026-10-21T11:30:00Z",
+    "salida": "2026-10-21T12:49:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 48,
+    "veterinario_id": 2,
+    "granja_id": 15,
+    "entrada": "2026-10-22T08:30:00Z",
+    "salida": "2026-10-22T09:23:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 49,
+    "veterinario_id": 2,
+    "granja_id": 13,
+    "entrada": "2026-10-23T08:30:00Z",
+    "salida": "2026-10-23T09:28:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 50,
+    "veterinario_id": 2,
+    "granja_id": 9,
+    "entrada": "2026-10-26T08:30:00Z",
+    "salida": "2026-10-26T09:25:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 51,
+    "veterinario_id": 2,
+    "granja_id": 15,
+    "entrada": "2026-10-27T08:30:00Z",
+    "salida": "2026-10-27T09:57:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 52,
+    "veterinario_id": 2,
+    "granja_id": 25,
+    "entrada": "2026-10-27T11:30:00Z",
+    "salida": "2026-10-27T12:21:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 53,
+    "veterinario_id": 2,
+    "granja_id": 13,
+    "entrada": "2026-10-28T08:30:00Z",
+    "salida": "2026-10-28T09:34:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 54,
+    "veterinario_id": 2,
+    "granja_id": 24,
+    "entrada": "2026-10-28T11:30:00Z",
+    "salida": "2026-10-28T12:27:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 55,
+    "veterinario_id": 2,
+    "granja_id": 23,
+    "entrada": "2026-10-30T08:30:00Z",
+    "salida": "2026-10-30T09:49:00Z",
+    "estado_granja_en_visita": "zona_vigilancia",
+    "parada_id": null
+  },
+  {
+    "id": 56,
+    "veterinario_id": 2,
+    "granja_id": 10,
+    "entrada": "2026-10-30T11:30:00Z",
+    "salida": "2026-10-30T12:26:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 57,
+    "veterinario_id": 2,
+    "granja_id": 13,
+    "entrada": "2026-10-31T08:30:00Z",
+    "salida": "2026-10-31T10:01:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 58,
+    "veterinario_id": 2,
+    "granja_id": 21,
+    "entrada": "2026-10-31T11:30:00Z",
+    "salida": "2026-10-31T12:27:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 59,
+    "veterinario_id": 2,
+    "granja_id": 13,
+    "entrada": "2026-11-01T08:30:00Z",
+    "salida": "2026-11-01T09:42:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 60,
+    "veterinario_id": 2,
+    "granja_id": 21,
+    "entrada": "2026-11-02T08:30:00Z",
+    "salida": "2026-11-02T09:35:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  },
+  {
+    "id": 61,
+    "veterinario_id": 2,
+    "granja_id": 24,
+    "entrada": "2026-11-02T11:30:00Z",
+    "salida": "2026-11-02T12:41:00Z",
+    "estado_granja_en_visita": "sin_incidencias",
+    "parada_id": null
+  }
+]
